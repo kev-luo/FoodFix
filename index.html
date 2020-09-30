@@ -3,9 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"> -->
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+
 </head>
 <body>
     
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        var key = '59df629ffde7493d810c678d689d0889';
+
+        var queryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=pasta&maxFat=25&number=2`;
+        
+        var ingQueryUrl = `https://api.spoonacular.com/recipes/654959/information?apiKey=${key}&includeNutrition=false`;
+
+        
+
+        // $.ajax({
+        //     url: queryUrl,
+        //     method: "GET"
+        // }).then(function(response) {
+        //     console.log(response);
+        // })
+
+        $.ajax({
+            url: ingQueryUrl,
+            method: "GET"
+        }).then(function(response) {
+
+            console.log(response);
+
+            // declare variable that holds all ingredients
+            var allIngr = '';
+            var ingreds = response.extendedIngredients;
+            var servings = response.servings;
+            var recipeId = response.id;
+
+            // for loop to loop through all items in response.extendedIngredients
+            for (var i=0, j=response.extendedIngredients.length; i<j; i++) {
+
+                // for each ingredient concatenate amount+units+ingredient into one string
+                // if there are no units, exclude units from concatenation
+                if (ingreds[i].unit !== '') {
+                    var concatIngr = `${ingreds[i].amount} ${ingreds[i].unit} ${ingreds[i].name}`;
+                } else {
+                    var concatIngr = `${ingreds[i].amount} ${ingreds[i].name}`;
+                }
+
+                // concatenate all ingredients into one string
+                allIngr += concatIngr + '\n';
+            }
+            
+            getNutrientsVisualized(recipeId);
+
+        })
+
+        function getNutrientsVisualized(recipeId) {
+            $.ajax({
+                url: `https://api.spoonacular.com/recipes/${recipeId}/nutritionWidget.json?apiKey=59df629ffde7493d810c678d689d0889`,
+                get: "GET"
+            }).then(function(response) {
+                console.log(response);
+            })
+        }
+    </script>
 </body>
 </html>
