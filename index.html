@@ -1,11 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+    <link rel="stylesheet" href="style.css">
+    <title>Welcome to Nutreent!</title>
 </head>
+
 <body>
-    
+    <!-- logo for NuTreent -->
+    <section class="hero is fullheight">
+        <div class="hero-body">
+            <div class="container">
+                <figure class="image">
+                    <img src="NuTreentNarrow.png">
+                </figure>
+            </div>
+
+        </div>
+        </div>
+    </section>
+    <!-- insert input section -->
+    <div class="mx-6">
+        <div class="control has-icons-left">
+            <input class="input is-large" type="search" placeholder="What would you like to eat today?">
+            <span class="icon is-medium is-left">
+                <i class="fas fa-search"></i>
+            </span>
+        </div>
+    </div>
+
+    <!-- insert drop down menu bar for special diet plans -->
+    <div class="ml-6">
+        <div class="dropdown is-hoverable">
+            <div class="dropdown-trigger">
+                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>Special Dietary Plan</span>
+                    <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="false"></i>
+                    </span>
+                </button>
+            </div>
+
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Vegetarian Diet
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Vegan Diet
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Pescatarian Diet
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Keto Diet
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Paleo Diet
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- insert 2nd drop down menu for breakfast, lunch or dinner -->
+        <div class="dropdown is-hoverable">
+            <div class="dropdown-trigger">
+                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                    <span>Meal Time</span>
+                    <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Breakfast
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Lunch
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        Dinner
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+            <h6>©NuTreent 2020</h6>
+            </p>
+        </div>
+    </footer>
+
 </body>
+
 </html>
