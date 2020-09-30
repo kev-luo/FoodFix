@@ -36,7 +36,7 @@
     </div>
 
     <div class="section" id="results">
-        <div class="box">
+        <!-- <div class="box">
             <article class="media">
                 <div class="media-left">
                     <figure class="image is-128x128">
@@ -49,15 +49,13 @@
                     </div>
                 </div>
             </article>
-        </div>
+        </div> -->
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <script>
 
     $(document).ready(function() {
-
-        var key = '59df629ffde7493d810c678d689d0889';
 
         // event listener for submit button
         $("#searchBtn").on("click", function(event) {
@@ -67,6 +65,7 @@
             // variables to store user input
             var recipeSearch = $("#recipe").val();
             var numResults = $("#numResults").val();
+            var key = '59df629ffde7493d810c678d689d0889';
             // URL for recipes
             var queryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${recipeSearch}&number=${numResults}`;
 
@@ -117,95 +116,17 @@
 
         $("#results").on("click",".box",function(event) {
 
-            // event.preventDefault();
+            event.preventDefault();
 
+            // save clicked item recipeId to local storage
             var recipeId = $(this).attr("data-recipeId");
-
+            localStorage.setItem("recipeId",recipeId);
+            
+            // redirect to next displayNutrients page
             window.location = "displayNutrients.html";
 
-            getIngredients(recipeId);
-            getNutrients(recipeId)
         })
         
-        // function to get recipe ingredients
-        function getIngredients(recipeId) {
-            // URL for detailed ingredients
-            var ingredId = recipeId;
-            var ingQueryUrl = `https://api.spoonacular.com/recipes/${ingredId}/information?apiKey=${key}`;
-
-            // ajax call to get ingredients
-            $.ajax({
-                url: ingQueryUrl,
-                method: "GET"
-            }).then(function(response) {
-                console.log(response);
-
-                // declare variable that holds all ingredients information
-                var allIngr = [];
-                var ingreds = response.extendedIngredients;
-                var servings = response.servings;
-                var recipeId = response.id;
-
-                // for loop to loop through all items in response.extendedIngredients
-                for (var i=0, j=ingreds.length; i<j; i++) {
-
-                    // for each ingredient concatenate amount+units+ingredient into one string
-                    if (ingreds[i].unit !== '') {
-                        var concatIngr = `${ingreds[i].amount} ${ingreds[i].unit} ${ingreds[i].name}`;
-                    // if there are no units, exclude units from concatenation
-                    } else {
-                        var concatIngr = `${ingreds[i].amount} ${ingreds[i].name}`;
-                    }
-
-                    // add ingredients to ingredients array
-                    allIngr.push(concatIngr);
-                }
-            })
-        }
-            
-        // function to get nutrients
-        function getNutrients(recipeId) {
-            // URL for recipe nutrition
-            var nutrId = recipeId;
-            var nutrQueryUrl = `https://api.spoonacular.com/recipes/${nutrId}/nutritionWidget.json?apiKey=${key}`
-
-            // ajax call to get nutrients
-            $.ajax({
-                url: nutrQueryUrl,
-                get: "GET"
-            }).then(function(response) {
-
-                // declare arrays to store detailed nutrition facts
-                var nutrientsBadArray = [];
-                var nutrientsGoodArray = [];
-
-                // console.log(response);
-
-                // store overview facts in object
-                var quickNutrFacts = {
-                    calories: response.calories,
-                    carbs: response.carbs,
-                    fat: response.fat,
-                    protein: response.protein
-                }
-
-                // store nutrition fact objects in arrays
-                var badNutr = response.bad.length;
-                for (var i=0; i<badNutr; i++) {
-                    var facts = response.bad[i]
-                    nutrientsBadArray.push(facts);
-                }
-
-                var goodNutr = response.good.length;
-                for (var i=0; i<goodNutr; i++) {
-                    var goodFacts = response.good[i];
-                    nutrientsGoodArray.push(goodFacts);
-                }
-
-                console.log(nutrientsBadArray, nutrientsGoodArray)
-                
-            })
-        }
     });
     </script>
 </body>
