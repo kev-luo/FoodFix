@@ -8,7 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
 
+    <style>
+        .box {
+            box-radius: 'radius-small';
+        }
+    </style>
 </head>
+
+
 <body>
     
     <div class="field">
@@ -28,52 +35,28 @@
         </div>
     </div>
 
-    <div id="results">
-        <!-- <div class="box">
+    <div class="section" id="results">
+        <div class="box">
             <article class="media">
                 <div class="media-left">
-                    <figure class="image is-64x64">
+                    <figure class="image is-128x128">
                         <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
                     </figure>
                 </div>
-                <div class="media-content">
+                <div class="media-content"> 
                     <div class="content">
                         <p>John Smith</p>
                     </div>
                 </div>
             </article>
-        </div> -->
+        </div>
     </div>
-
-    <!-- <table class="table">
-        <thead>
-            <tr>
-                <th><abbr title="Ingredient">Ingredient</abbr></th>
-                <th><abbr title="Amount">Amount</abbr></th>
-                <th><abbr title="Unit">Unit</abbr></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Chicken</td>
-                <td>1</td>
-                <td>Whole</td>
-
-            </tr>
-            <tr>
-                <td>Garlic</td>
-                <td>11</td>
-                <td>Cloves</td>
-
-            </tr>
-        </tbody>
-    </table> -->
-
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <script>
 
-        
+    $(document).ready(function() {
+
         var key = '59df629ffde7493d810c678d689d0889';
 
         // event listener for submit button
@@ -106,12 +89,14 @@
                 console.log(response);
                 
                 for (var i=0; i<(parseInt(numResults)); i++) {
-
+                    // create new box and article
                     var newBox = $("<div>",{"class":"box"});
                     newBox.attr("data-recipeId",response.results[i].id);
                     var newArticle = $("<article>",{"class":"media"});
+
+                    // create tags to hold image for each box
                     var imgDiv = $("<div>",{"class":"media-left"});
-                    var newFig = $("<figure>",{"class":"image is-64x64"});
+                    var newFig = $("<figure>",{"class":"image is-128x128"});
                     var newImg = $("<img>",{
                         src:response.results[i].image, 
                         alt:response.results[i].title,
@@ -120,14 +105,9 @@
                     newFig.append(newImg);
                     imgDiv.append(newFig);
 
-                    var textDiv = $("<div>",{"class":"media-content"});
-                    var textDivInner = $("<div>",{"class":"content"});
                     var newPara = $("<p>",{text:response.results[i].title});
 
-                    textDivInner.append(newPara);
-                    textDiv.append(textDivInner);
-
-                    newArticle.append(imgDiv, textDiv);
+                    newArticle.append(imgDiv, newPara);
                     newBox.append(newArticle);
                     $("#results").append(newBox);
 
@@ -137,10 +117,12 @@
 
         $("#results").on("click",".box",function(event) {
 
-            event.preventDefault();
+            // event.preventDefault();
 
             var recipeId = $(this).attr("data-recipeId");
-            
+
+            window.location = "displayNutrients.html";
+
             getIngredients(recipeId);
             getNutrients(recipeId)
         })
@@ -224,7 +206,7 @@
                 
             })
         }
-
+    });
     </script>
 </body>
 </html>
