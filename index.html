@@ -5,70 +5,226 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"> -->
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
 
 </head>
 <body>
     
+    <div class="field">
+        <label class="label">Name</label>
+        <div class="control">
+          <input class="input" id="recipe" type="text" placeholder="Recipe">
+        </div>
+        <label class="label">Number of Results</label>
+        <div class="control">
+            <input class="input" id="numResults" type="text" placeholder="Default 10">
+        </div>
+    </div>
+
+    <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-link" id="searchBtn">Display Recipes</button>
+        </div>
+    </div>
+
+    <div id="results">
+        <!-- <div class="box">
+            <article class="media">
+                <div class="media-left">
+                    <figure class="image is-64x64">
+                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                    </figure>
+                </div>
+                <div class="media-content">
+                    <div class="content">
+                        <p>John Smith</p>
+                    </div>
+                </div>
+            </article>
+        </div> -->
+    </div>
+
+    <!-- <table class="table">
+        <thead>
+            <tr>
+                <th><abbr title="Ingredient">Ingredient</abbr></th>
+                <th><abbr title="Amount">Amount</abbr></th>
+                <th><abbr title="Unit">Unit</abbr></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Chicken</td>
+                <td>1</td>
+                <td>Whole</td>
+
+            </tr>
+            <tr>
+                <td>Garlic</td>
+                <td>11</td>
+                <td>Cloves</td>
+
+            </tr>
+        </tbody>
+    </table> -->
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
     <script>
+
+        
         var key = '59df629ffde7493d810c678d689d0889';
 
-        var queryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=pasta&maxFat=25&number=2`;
-        
-        var ingQueryUrl = `https://api.spoonacular.com/recipes/654959/information?apiKey=${key}&includeNutrition=false`;
+        // event listener for submit button
+        $("#searchBtn").on("click", function(event) {
 
-        
+            event.preventDefault();
 
-        // $.ajax({
-        //     url: queryUrl,
-        //     method: "GET"
-        // }).then(function(response) {
-        //     console.log(response);
-        // })
+            // variables to store user input
+            var recipeSearch = $("#recipe").val();
+            var numResults = $("#numResults").val();
+            // URL for recipes
+            var queryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${recipeSearch}&number=${numResults}`;
 
-        $.ajax({
-            url: ingQueryUrl,
-            method: "GET"
-        }).then(function(response) {
-
-            console.log(response);
-
-            // declare variable that holds all ingredients
-            var allIngr = '';
-            var ingreds = response.extendedIngredients;
-            var servings = response.servings;
-            var recipeId = response.id;
-
-            // for loop to loop through all items in response.extendedIngredients
-            for (var i=0, j=response.extendedIngredients.length; i<j; i++) {
-
-                // for each ingredient concatenate amount+units+ingredient into one string
-                // if there are no units, exclude units from concatenation
-                if (ingreds[i].unit !== '') {
-                    var concatIngr = `${ingreds[i].amount} ${ingreds[i].unit} ${ingreds[i].name}`;
-                } else {
-                    var concatIngr = `${ingreds[i].amount} ${ingreds[i].name}`;
-                }
-
-                // concatenate all ingredients into one string
-                allIngr += concatIngr + '\n';
-            }
+            // clear user input
+            $("#recipe").val('');
+            $("#numResults").val('');
             
-            getNutrientsVisualized(recipeId);
-
+            // call function to return list of recipes
+            getRecipes(queryUrl, numResults);
+            
         })
 
-        function getNutrientsVisualized(recipeId) {
+        // function to return list of recipes
+        function getRecipes(queryUrl, numResults) {
+            // ajax call to get recipes
             $.ajax({
-                url: `https://api.spoonacular.com/recipes/${recipeId}/nutritionWidget.json?apiKey=59df629ffde7493d810c678d689d0889`,
-                get: "GET"
+                url: queryUrl,
+                method: "GET"
             }).then(function(response) {
                 console.log(response);
+                
+                for (var i=0; i<(parseInt(numResults)); i++) {
+
+                    var newBox = $("<div>",{"class":"box"});
+                    newBox.attr("data-recipeId",response.results[i].id);
+                    var newArticle = $("<article>",{"class":"media"});
+                    var imgDiv = $("<div>",{"class":"media-left"});
+                    var newFig = $("<figure>",{"class":"image is-64x64"});
+                    var newImg = $("<img>",{
+                        src:response.results[i].image, 
+                        alt:response.results[i].title,
+                    });
+
+                    newFig.append(newImg);
+                    imgDiv.append(newFig);
+
+                    var textDiv = $("<div>",{"class":"media-content"});
+                    var textDivInner = $("<div>",{"class":"content"});
+                    var newPara = $("<p>",{text:response.results[i].title});
+
+                    textDivInner.append(newPara);
+                    textDiv.append(textDivInner);
+
+                    newArticle.append(imgDiv, textDiv);
+                    newBox.append(newArticle);
+                    $("#results").append(newBox);
+
+                }
             })
         }
+
+        $("#results").on("click",".box",function(event) {
+
+            event.preventDefault();
+
+            var recipeId = $(this).attr("data-recipeId");
+            
+            getIngredients(recipeId);
+            getNutrients(recipeId)
+        })
+        
+        // function to get recipe ingredients
+        function getIngredients(recipeId) {
+            // URL for detailed ingredients
+            var ingredId = recipeId;
+            var ingQueryUrl = `https://api.spoonacular.com/recipes/${ingredId}/information?apiKey=${key}`;
+
+            // ajax call to get ingredients
+            $.ajax({
+                url: ingQueryUrl,
+                method: "GET"
+            }).then(function(response) {
+                console.log(response);
+
+                // declare variable that holds all ingredients information
+                var allIngr = [];
+                var ingreds = response.extendedIngredients;
+                var servings = response.servings;
+                var recipeId = response.id;
+
+                // for loop to loop through all items in response.extendedIngredients
+                for (var i=0, j=ingreds.length; i<j; i++) {
+
+                    // for each ingredient concatenate amount+units+ingredient into one string
+                    if (ingreds[i].unit !== '') {
+                        var concatIngr = `${ingreds[i].amount} ${ingreds[i].unit} ${ingreds[i].name}`;
+                    // if there are no units, exclude units from concatenation
+                    } else {
+                        var concatIngr = `${ingreds[i].amount} ${ingreds[i].name}`;
+                    }
+
+                    // add ingredients to ingredients array
+                    allIngr.push(concatIngr);
+                }
+            })
+        }
+            
+        // function to get nutrients
+        function getNutrients(recipeId) {
+            // URL for recipe nutrition
+            var nutrId = recipeId;
+            var nutrQueryUrl = `https://api.spoonacular.com/recipes/${nutrId}/nutritionWidget.json?apiKey=${key}`
+
+            // ajax call to get nutrients
+            $.ajax({
+                url: nutrQueryUrl,
+                get: "GET"
+            }).then(function(response) {
+
+                // declare arrays to store detailed nutrition facts
+                var nutrientsBadArray = [];
+                var nutrientsGoodArray = [];
+
+                // console.log(response);
+
+                // store overview facts in object
+                var quickNutrFacts = {
+                    calories: response.calories,
+                    carbs: response.carbs,
+                    fat: response.fat,
+                    protein: response.protein
+                }
+
+                // store nutrition fact objects in arrays
+                var badNutr = response.bad.length;
+                for (var i=0; i<badNutr; i++) {
+                    var facts = response.bad[i]
+                    nutrientsBadArray.push(facts);
+                }
+
+                var goodNutr = response.good.length;
+                for (var i=0; i<goodNutr; i++) {
+                    var goodFacts = response.good[i];
+                    nutrientsGoodArray.push(goodFacts);
+                }
+
+                console.log(nutrientsBadArray, nutrientsGoodArray)
+                
+            })
+        }
+
     </script>
 </body>
 </html>
