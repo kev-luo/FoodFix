@@ -6,6 +6,7 @@
 **create table based on ingredients list**
 **create list? based on recipe instructions**
 **do we want to include quick facts alongside recipe title/picture?**
+**maybe use bulma progress bars instead of chart.js to display nutrition information**
 
 Done
 be able to switch to separate html file when clicking recipe

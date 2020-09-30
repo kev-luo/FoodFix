@@ -10,6 +10,8 @@
 
 </head>
 <body>
+    <div id="graphContainer" style="width: 50%;"></div>
+
     <table class="table">
         <thead>
             <tr>
@@ -36,10 +38,11 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
     <script>
 
     $(document).ready(function() {
-
+        
         // get recipeId from localStorage
         var recipeId = localStorage.getItem("recipeId");
         
@@ -131,11 +134,11 @@
                 var goodPerc = [];
 
                 $.each(nutrientsBad,function(key) {
-                    badNutrNames.push(key);
+                    badNutrNames.push(key + ':  ' + nutrientsBad[key].amount);
                     badPerc.push(nutrientsBad[key].percentOfDailyNeeds);
                 })
                 $.each(nutrientsGood,function(key) {
-                    goodNutrNames.push(key);
+                    goodNutrNames.push(key + ':  ' + nutrientsGood[key].amount);
                     goodPerc.push(nutrientsGood[key].percentOfDailyNeeds);
                 })
 
@@ -174,18 +177,48 @@
                     type: 'horizontalBar',
                     data: chartDataBad,
                     options: {
+                        plugins: {
+                            datalabels: {
+                                color: 'rgb(255, 99, 132)',
+                                anchor: 'end',
+                                offset: 10, 
+                                formatter: function(value) {
+                                    return value+"%";
+                                }
+                            }
+                        },
                         elements: {
                             rectangle: {
                                 borderWidth: 2,
                             }
                         },
                         responsive: true,
+                        scales: {
+                            xAxes: [{
+                                gridLines: {
+                                    display: true,
+                                    drawBorder: true,
+                                    drawOnChartArea: false,
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Percent of Daily Needs'
+                                }
+                            }],
+                            yAxes: [{
+                                gridLines: {
+                                    display: true,
+                                    drawBorder: true,
+                                    drawOnChartArea: false,
+                                }
+                            }]
+                        },
                         legend: {
-                            position: 'right',
+                            display: false,
                         },
                         title: {
                             display: true,
-                            text: 'Percent of Daily Needs'
+                            text: 'Limit These Nutrients'
                         }
                     }
                 })
@@ -195,23 +228,53 @@
                     type: 'horizontalBar',
                     data: chartDataGood,
                     options: {
+                        plugins: {
+                            datalabels: {
+                                color: 'rgb(61, 100, 251)',
+                                anchor: 'end',
+                                offset: 10, 
+                                formatter: function(value) {
+                                    return value+"%";
+                                }
+                            }
+                        },
                         elements: {
                             rectangle: {
                                 borderWidth: 2,
                             }
                         },
                         responsive: true,
+                        scales: {
+                            xAxes: [{
+                                gridLines: {
+                                    display: true,
+                                    drawBorder: true,
+                                    drawOnChartArea: false,
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Percent of Daily Needs'
+                                }
+                            }],
+                            yAxes: [{
+                                gridLines: {
+                                    display: true,
+                                    drawBorder: true,
+                                    drawOnChartArea: false,
+                                }
+                            }]
+                        },
                         legend: {
-                            position: 'right',
+                            display: false,
                         },
                         title: {
                             display: true,
-                            text: 'Percent of Daily Needs'
+                            text: 'Get Enough of These Nutrients'
                         }
                     }
                 })
 
-                $("body").prepend(newCanvBad, newCanvGood);
+                $("#graphContainer").append(newCanvBad, newCanvGood);
                 console.log(badPerc, goodPerc)
                 
             })
