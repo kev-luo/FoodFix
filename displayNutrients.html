@@ -12,29 +12,17 @@
 <body>
     <div id="graphContainer" style="width: 50%;"></div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th><abbr title="Ingredient">Ingredient</abbr></th>
-                <th><abbr title="Amount">Amount</abbr></th>
-                <th><abbr title="Unit">Unit</abbr></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Chicken</td>
-                <td>1</td>
-                <td>Whole</td>
-
-            </tr>
-            <tr>
-                <td>Garlic</td>
-                <td>11</td>
-                <td>Cloves</td>
-
-            </tr>
-        </tbody>
-    </table>
+    <section class="section">
+        <div class="container">
+            <div class="content">
+                <ol class="panel">
+                    <li class="panel-block is-small">this</li>
+                    <li class="panel-block is-small">this</li>
+                    <li class="panel-block is-small">this</li>
+                </ol>
+            </div>
+        </div>
+    </section>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
@@ -43,12 +31,14 @@
 
     $(document).ready(function() {
         
+
+
         // get recipeId from localStorage
         var recipeId = localStorage.getItem("recipeId");
         
         var key = 'ea5ee7462a104b1f97d63a7f03d3330f';
         
-        getIngredients(recipeId);
+        // getIngredients(recipeId);
         getNutrients(recipeId);
 
         // function to get recipe ingredients
@@ -97,7 +87,7 @@
                 url: nutrQueryUrl,
                 get: "GET"
             }).then(function(response) {
-
+                console.log(response);
                 // declare objects to store detailed nutrition facts
                 var nutrientsBad = {};
                 var nutrientsGood = {};

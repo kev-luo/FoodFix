@@ -11,6 +11,15 @@
     <title>Welcome to Nutreent!</title>
 </head>
 
+<style>
+    hr {
+        /* margin-top: 1rem; */
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
 <body>
     <!-- logo for NuTreent -->
     <section class="hero is fullheight">
@@ -25,64 +34,83 @@
         </div>
     </section>
     <!-- insert input section -->
-    <div class="mx-6">
-        <div class="control has-icons-left">
-            <input class="input is-large" id="recipe" type="search" placeholder="What would you like to eat today?">
-            <span class="icon is-medium is-left">
-                <i class="fas fa-search"></i>
-            </span>
-            <label class="label">Number of Results</label>
-            <div class="control">
-                <input class="input" id="numResults" type="text" placeholder="Default 10">
+    <section class="section has-background-info-light mx-6">
+        <container class="container">
+            <div class="field" id="mealField">
+                <label class="label is-medium">Meal</label>
+                <div class="control has-icons-left">
+                    <input class="input" id="recipe" type="text" placeholder="What would you like to eat today?">
+                    <span class="icon is-medium is-left">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="field">       
+                <label class="label is-medium">Number of Results</label>
+                <div class="control has-icons-left">
+                    <input class="input" id="numResults" type="text" placeholder="Default 10">
+                    <span class="icon is-medium is-left">
+                        <i class="fas fa-list-ol"></i>
+                    </span>
+                </div>
+            </div>
+            <hr>
+            <label class="label">Optional</label>
+                <!-- insert drop down menu bar for special diet plans -->
+            <div class="field is-grouped">
+                <div class="field">
+                    <label class="label has-text-grey">Dietary Plans</label>
+                    <p class="control">
+                        <span class="select">
+                            <select id="diet">
+                                <option>None</option>
+                                <option>Vegetarian</option>
+                                <option>Vegan</option>
+                                <option>Pescetarian</option>
+                                <option>Ketogenic</option>
+                                <option>Paleo</option>
+                                <option>Gluten Free</option>
+                            </select>
+                        </span>
+                    </p>
+                </div>
+
+                <!-- insert drop down menu bar for meal time -->
+                <div class="field">
+                    <label class="label has-text-grey">Sort By (Descending)</label>
+                    <p class="control">
+                        <span class="select">
+                            <select id="sortBy">
+                                <option>Healthiness</option>
+                                <option>Calories</option>
+                                <option>Popularity</option>
+                                <option>Time</option>
+                                <option>Price</option>
+                                <option>Random</option>
+                            </select>
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="field is-grouped is-grouped-centered">
+                <div class="control">
+                    <button class="button is-link has-text-weight-semibold" id="searchBtn">Display Recipes</button>
+                </div>
+            </div>
+        </container>
+    </section>
+
+<!-- TODO: -->
+    <!-- recipes are stored here -->
+    <div class="section">
+        <!-- container class tightens the boxes towards the center -->
+        <div class="container">
+            <div class="columns is-multiline" id="results">
+
             </div>
         </div>
     </div>
-
-    <!-- insert drop down menu bar for special diet plans -->
-    <div class="mx-6">
-        <div class="field">
-            <label class="label">Dietary Plans</label>
-            <p class="control">
-                <span class="select">
-                    <select id="diet">
-                        <option>None</option>
-                        <option>Vegetarian</option>
-                        <option>Vegan</option>
-                        <option>Pescetarian</option>
-                        <option>Ketogenic</option>
-                        <option>Paleo</option>
-                        <option>Gluten Free</option>
-                    </select>
-                </span>
-            </p>
-        </div>
-
-        <!-- insert drop down menu bar for meal time -->
-        <div class="field">
-            <label class="label">Sort By (Descending)</label>
-            <p class="control">
-                <span class="select">
-                    <select id="sortBy">
-                        <option>Healthiness</option>
-                        <option>Calories</option>
-                        <option>Popularity</option>
-                        <option>Time</option>
-                        <option>Price</option>
-                        <option>Random</option>
-                    </select>
-                </span>
-            </p>
-        </div>
-    </div>
-
-    <div class="field is-grouped mx-6 mt-6">
-        <div class="control">
-            <button class="button is-link" id="searchBtn">Display Recipes</button>
-        </div>
-    </div>
-    
-    <!-- recipes are stored here -->
-    <div class="section mx-6" id="results"></div>
+<!-- FIXME: -->
 
 <!-- TODO: -->
     <!-- return modal if no results show up -->
@@ -111,7 +139,9 @@
     <script>
 
         $(document).ready(function () {
-
+            $(".box").mouseover(function() {
+                $(this).toggleClass("button is-outlined")
+            })
 // TODO:    
             var key = 'ea5ee7462a104b1f97d63a7f03d3330f';
 
@@ -146,9 +176,10 @@
                 // if no food is specified, do not query and let user know
                 if ($("#recipe").val() === '') {
                     $("#recipe").addClass("is-danger");
-                    $("#recipe").attr("placeholder","Please specify the meal")
+                    $("#mealField").append($("<p>", {"class": "is-danger help", id: "removeMe", text: "Please specify a meal."}))
                 } else {
-                    $("#recipe").attr("placeholder","What would you like to eat today?")
+                    $("#recipe").removeClass("is-danger");
+                    $("#removeMe").remove();
                     // variables to store user input
                     var recipeSearch = $("#recipe").val();
                     var numResults = $("#numResults").val();
@@ -185,7 +216,7 @@
                     url: queryUrl,
                     method: "GET"
                 }).then(function (response) {
-                    
+                    console.log(response);
 // TODO:
                     if (response.totalResults === 0) {
                         $("#noResultsFound").addClass("is-active");
@@ -198,9 +229,12 @@
                     }
                     
                     for (var i = 0; i < numResultsOr; i++) {
-// TODO:
+// FIXME:
                         // create new box and article
-                        var newBox = $("<div>", { "class": "box" });
+// TODO:
+                        // "column" & "is-half" ensures each box takes up half a row
+                        var newBox = $("<a>", { "class": "box column is-half has-background-white-ter is-clickable" });
+// FIXME:                            
                         newBox.attr("data-recipeId", response.results[i].id);
                         var newArticle = $("<article>", { "class": "media" });
 
@@ -210,12 +244,13 @@
                         var newImg = $("<img>", {
                             src: response.results[i].image,
                             alt: response.results[i].title,
+                            "class": "is-rounded"
                         });
 
                         newFig.append(newImg);
                         imgDiv.append(newFig);
 
-                        var newPara = $("<p>", { text: response.results[i].title });
+                        var newPara = $("<p>", {text: response.results[i].title});
 
                         newArticle.append(imgDiv, newPara);
                         newBox.append(newArticle);
