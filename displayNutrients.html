@@ -28,14 +28,12 @@
     
     <div id="graphContainer" style="width: 50%"></div>
 
-    <div class="container">
-
-        <span>48%</span>
-        <progress  class="progress is-danger" value="48" max="100" ></progress>
-
-    <br/><br/>
-
-    </div>
+    <section class="section">
+        <div class="columns is-8">
+            <div class="column is-one-third is-offset-2" id="progressBadNutr"></div>
+            <div class="column is-one-third " id="progressGoodNutr"></div>
+        </div>
+    </section>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
@@ -47,10 +45,10 @@
             // get recipeId from localStorage
             var recipeId = localStorage.getItem("recipeId");
 
-            var key = '30b94c03922c4786a86659dab622baff';
+            var key = '18fae4ffca624ea6872a5d0b9787476e';
 
-            // getIngredients(recipeId);
-            // getNutrients(recipeId);
+            getIngredients(recipeId);
+            getNutrients(recipeId);
 
             // function to get recipe ingredients
             function getIngredients(recipeId) {
@@ -150,8 +148,6 @@
                     var nutrientsBad = {};
                     var nutrientsGood = {};
 
-                    // console.log(response);
-
                     // store overview facts in object. should this be displayed alongside recipe display?
                     // var quickNutrFacts = {
                     //     calories: response.calories,
@@ -172,33 +168,41 @@
                         nutrientsGood[response.good[i].title] = response.good[i];
                     }
 
-                    // first y axis labels
-                    var badNutrNames = [];
-                    // second y axis labels
-                    var goodNutrNames = [];
-                    // first dataset x axis
-                    var badPerc = [];
-                    // second dataset x axis
-                    var goodPerc = [];
-
+                    // loop through bad nutrients and create progress bars
                     $.each(nutrientsBad, function (key) {
-                        badNutrNames.push(key + ':  ' + nutrientsBad[key].amount);
-                        badPerc.push(nutrientsBad[key].percentOfDailyNeeds);
+                        var percentages = nutrientsBad[key].percentOfDailyNeeds;
+                        var newDiv = $("<div>", {"class": "container"});
+                        var newSpan = $("<span>", {text: `${percentages}%`});
+                        var newProgress = $("<progress>", 
+                            {"class": "progress is-danger",
+                            value: percentages,
+                            max: '100'});
+                        
+                        newDiv.append(newSpan, newProgress);
+                        newDiv.append($("<br>"));
+                        $("#progressBadNutr").append(newDiv);
                     })
+
+                    // loop through good nutrients and create progress bars
                     $.each(nutrientsGood, function (key) {
-                        goodNutrNames.push(key + ':  ' + nutrientsGood[key].amount);
-                        goodPerc.push(nutrientsGood[key].percentOfDailyNeeds);
+                        var percentages = nutrientsGood[key].percentOfDailyNeeds;
+                        var newDiv = $("<div>", {"class": "container"});
+                        var newSpan = $("<span>", {text: `${percentages}%`});
+                        var newProgress = $("<progress>", 
+                            {"class": "progress is-info",
+                            value: percentages,
+                            max: '100'});
+                        
+                        newDiv.append(newSpan, newProgress);
+                        newDiv.append($("<br>"));
+                        $("#progressGoodNutr").append(newDiv);
                     })
-
-
-
 
                     $("#graphContainer").append(newCanvBad, newCanvGood);
                     console.log(badPerc, goodPerc)
 
                 })
             }
-            var key = '30b94c03922c4786a86659dab622baff';
         });
 
 
