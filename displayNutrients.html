@@ -98,7 +98,7 @@
             // get recipeId from localStorage
             var recipeId = localStorage.getItem("recipeId");
 
-            var key = '30b94c03922c4786a86659dab622baff';
+            var key = '556eeedc826247eda5a71886bdd6ceb9';
 
             getIngredients(recipeId);
             getNutrients(recipeId);
@@ -215,14 +215,6 @@
                     // declare objects to store detailed nutrition facts
                     var nutrientsBad = {};
                     var nutrientsGood = {};
-
-                    // store overview facts in object. should this be displayed alongside recipe display?
-                    // var quickNutrFacts = {
-                    //     calories: response.calories,
-                    //     carbs: response.carbs,
-                    //     fat: response.fat,
-                    //     protein: response.protein
-                    // }
 
                     // store nutrition fact objects in objects
                     var badNutr = response.bad.length;
