@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <!-- logo for NuTreent -->
+    <!-- logo for FoodFix -->
     <section class="hero">
         <div class="animate__animated animate__jackInTheBox">
         <div class="hero-body">
@@ -144,7 +144,7 @@
 
             // if there is something in local storage, perform AJAX call
             if (localStorage.getItem("recipe") !== null) {
-            // store items from local storage
+            // get items from local storage
                 var storedRecipe = localStorage.getItem("recipe")
                 var storedNumResults = localStorage.getItem("reqResults")
                 var storedDietary = localStorage.getItem("diet")
@@ -210,7 +210,7 @@
                     url: queryUrl,
                     method: "GET"
                 }).then(function (response) {
-                    // show modal if no results found
+                    // if no results are found, show modal
                     if (response.totalResults === 0) {
                         $("#noResultsFound").addClass("is-active");
                     }
@@ -225,8 +225,9 @@
                     // variable to hold recipe ID's to look up quick facts on nutrition
                     var recipeIdForFacts = '';
 
+                    // for loop to display all recipe pictures and names
                     for (var i = 0; i < numResultsOr; i++) {
-                        // add recipe ID's to array
+                        // concatenate all recipe ID's
                         if (i === numResultsOr-1) {
                             recipeIdForFacts += response.results[i].id.toString();
                         } else {
@@ -283,7 +284,7 @@
             function getQuickFacts(ids) {
                 console.log(ids, typeof ids[0])
 
-                var bulkInfo = `https://api.spoonacular.com/recipes/informationBulk?apiKey=${key}&ids=${ids}&includeNutrition=true`
+                var bulkInfo = `https://api.spoonacular.com/recipes/informationBulk?apiKey=${key}&ids=${ids}&includeNutrition=true`;
 
                 $.ajax({
                     url: bulkInfo,
@@ -300,28 +301,33 @@
                         var time = response[i].readyInMinutes.toString();
                         var health = response[i].healthScore.toString();
 
-                        var likesPara = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                        var likesPara = $("<p>", {
+                            "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Likes: ${likes}`
                             })
-                        var carbs = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                        var carbs = $("<p>", {
+                            "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Carbs: ${macros.percentCarbs}%`
                             })
-                        var healthScore = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                        var healthScore = $("<p>", {
+                            "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Health Score: ${health}%`
                             })
-                        var protein = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                        var protein = $("<p>", {
+                            "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Protein: ${macros.percentProtein}%`
                             });
-                        var timePara = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                        var timePara = $("<p>", {
+                            "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Cook Time: ${time}`
                             })
-                        var fat = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                        var fat = $("<p>", {
+                            "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Fat: ${macros.percentFat}%`
                             })
 
                         recipeCard.append(likesPara,carbs,healthScore,protein,timePara,fat);
                     }
-                    console.log(response);
                 })
             }
         });
