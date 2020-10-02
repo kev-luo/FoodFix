@@ -7,29 +7,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>    
     <link rel="stylesheet" href="style.css">
-    <title>Welcome to Nutreent!</title>
+    <link rel="icon" type="image/png" href="chef.png">
+    <title>Welcome to Food Fix!</title>
 </head>
 
 <body>
     <!-- logo for NuTreent -->
     <section class="hero">
         <div class="animate__animated animate__jackInTheBox">
-            <div class="hero-body">
-                <div class="container">
-                    <figure class="image">
-                        <img src="FoodFix2.png">
-                    </figure>
-                </div>
-
+        <div class="hero-body">
+            <div class="container">
+                <figure class="image">
+                    <img src="FoodFix2.png">
+                </figure>
             </div>
+
         </div>
         </div>
+    </div>
     </section>
     <!-- insert input section -->
-    <section class="section has-background-info-light mx-6">
+    <section class="section has-background-white-ter mx-6" style="box-shadow: 5px 10px 18px #BF7F3F; border-radius: 10px;">
         <container class="container">
+            <!-- meal name -->
             <div class="field" id="mealField">
                 <label class="label is-medium">What would you like to eat today?</label>
                 <div class="control has-icons-left">
@@ -39,7 +41,8 @@
                     </span>
                 </div>
             </div>
-            <div class="field">
+            <!-- number of results -->
+            <div class="field">       
                 <label class="label is-medium">Number of Results</label>
                 <div class="control has-icons-left">
                     <input class="input" id="numResults" type="text" placeholder="Default 10">
@@ -49,8 +52,8 @@
                 </div>
             </div>
             <hr class="mb-1">
+            <!-- dropdown options -->
             <label class="label">Optional</label>
-            <!-- insert drop down menu bar for special diet plans -->
             <div class="field is-grouped">
                 <div class="field">
                     <label class="label has-text-grey">Dietary Plans</label>
@@ -86,6 +89,7 @@
                     </p>
                 </div>
             </div>
+            <!-- submit button -->
             <div class="field is-grouped is-grouped-centered">
                 <div class="control">
                     <button class="button is-link has-text-weight-semibold" id="searchBtn">Display Recipes</button>
@@ -94,7 +98,6 @@
         </container>
     </section>
 
-    <!-- TODO: -->
     <!-- recipes are stored here -->
     <div class="section">
         <!-- container class tightens the boxes towards the center -->
@@ -104,50 +107,51 @@
             </div>
         </div>
     </div>
-    <!-- FIXME: -->
 
-    <!-- TODO: -->
     <!-- return modal if no results show up -->
     <div class="modal" id="noResultsFound">
         <div class="modal-background"></div>
         <div class="modal-content">
-            <div class="notification has-text-centered">
-                <h3>Your search returned no results, please try again.</h3>
-            </div>
+          <div class="notification has-text-centered">
+            <h3>Your search returned no results, please try again.</h3>
+          </div>
         </div>
         <button class="modal-close is-large"></button>
     </div>
-    <!-- FIXME: -->
 
+    <!-- footer -->
     <footer class="footer py-2">
         <div class="content has-text-centered">
             <p>
             <h6>©FoodFix 2020</h6>
             </p>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/those-icons" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+
         </div>
     </footer>
 
-    <!-- javascript -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <script>
-
         $(document).ready(function () {
-            $(".box").mouseover(function () {
+
+            // event listener to outline recipe boxes when hovered over
+            $(".box").mouseover(function() {
                 $(this).toggleClass("button is-outlined")
             })
-            // TODO:    
-            var key = '556eeedc826247eda5a71886bdd6ceb9';
-
-            var storedRecipe = localStorage.getItem("recipe")
-            var storedNumResults = localStorage.getItem("reqResults")
-            var storedDietary = localStorage.getItem("diet")
-            var storedSorting = localStorage.getItem("sortBy")
-            var storageQueryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${storedRecipe}&number=${storedNumResults}&diet=${storedDietary}&sort=${storedSorting}&sortDirection=desc`;
-            var storageQueryUrlNoDiet = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${storedRecipe}&number=${storedNumResults}&sort=${storedDietary}&sortDirection=desc`;
+    
+            var key = '30b94c03922c4786a86659dab622baff';
 
             // if there is something in local storage, perform AJAX call
-            if (storedRecipe !== null) {
+            if (localStorage.getItem("recipe") !== null) {
+            // store items from local storage
+                var storedRecipe = localStorage.getItem("recipe")
+                var storedNumResults = localStorage.getItem("reqResults")
+                var storedDietary = localStorage.getItem("diet")
+                var storedSorting = localStorage.getItem("sortBy")
+                var storageQueryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${storedRecipe}&number=${storedNumResults}&diet=${storedDietary}&sort=${storedSorting}&sortDirection=desc`;
+                var storageQueryUrlNoDiet = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${storedRecipe}&number=${storedNumResults}&sort=${storedSorting}&sortDirection=desc`;
+
                 if (storedDietary === 'None') {
                     getRecipes(storageQueryUrlNoDiet, storedNumResults);
                 } else {
@@ -155,19 +159,19 @@
                 }
             }
 
-            $(window).on("click", function (event) {
-                $(".modal").removeClass("is-active");
+            // remove modal if user clicks anywhere outside modal
+            $(window).on("click", function(event) {
+                    $(".modal").removeClass("is-active");
             });
-            // FIXME:
+
             // event listener for submit button
             $("#searchBtn").on("click", function (event) {
-                // TODO:
-                // empty currently displayed recipe listing
+
 
                 // if no food is specified, do not query and let user know
                 if ($("#recipe").val() === '') {
                     $("#recipe").addClass("is-danger");
-                    $("#mealField").append($("<p>", { "class": "is-danger help", id: "removeMe", text: "Please specify a meal." }))
+                    $("#mealField").append($("<p>", {"class": "is-danger help", id: "removeMe", text: "Please specify a meal."}))
                 } else {
                     $("#results").empty();
                     $("#recipe").removeClass("is-danger");
@@ -197,7 +201,6 @@
                     localStorage.setItem("diet", dietary);
                     localStorage.setItem("sortBy", sorting);
                 }
-                // FIXME:                
             })
 
             // function to return list of recipes
@@ -207,25 +210,33 @@
                     url: queryUrl,
                     method: "GET"
                 }).then(function (response) {
-                    // TODO:
+                    // show modal if no results found
                     if (response.totalResults === 0) {
                         $("#noResultsFound").addClass("is-active");
                     }
 
+                    // if user didn't input expected number of results, default is 10
                     if (numResults === '') {
                         var numResultsOr = 10;
                     } else {
                         var numResultsOr = parseInt(numResults);
                     }
+                    
+                    // variable to hold recipe ID's to look up quick facts on nutrition
+                    var recipeIdForFacts = '';
 
                     for (var i = 0; i < numResultsOr; i++) {
-                        // FIXME:
-                        // create new box and article
-                        // TODO:
+                        // add recipe ID's to array
+                        if (i === numResultsOr-1) {
+                            recipeIdForFacts += response.results[i].id.toString();
+                        } else {
+                            recipeIdForFacts += response.results[i].id.toString() + ',';
+                        }
+
                         // "column" & "is-half" ensures each box takes up half a row
-                        var newDiv = $("<div>", { "class": "column is-half" });
-                        var newBox = $("<a>", { "class": "box has-background-white-ter is-clickable" });
-                        // FIXME:                            
+                        var newDiv = $("<div>", {"class": "column is-half"});
+                        var newBox = $("<a>", {"class": "box has-background-white-ter is-clickable" });
+                          
                         newBox.attr("data-recipeId", response.results[i].id);
                         var newArticle = $("<article>", { "class": "media" });
 
@@ -241,8 +252,8 @@
                         newFig.append(newImg);
                         imgDiv.append(newFig);
 
-                        var paraDiv = $("<div>", { "class": "content" });
-                        var newHead = $("<h4>", { text: response.results[i].title });
+                        var paraDiv = $("<div>", {"class": "content columns is gapless is-multiline"});
+                        var newHead = $("<h5>", {"class": "column is-full pb-0", text: response.results[i].title});
 
                         paraDiv.append(newHead);
                         newArticle.append(imgDiv, paraDiv);
@@ -250,9 +261,12 @@
                         newDiv.append(newBox);
                         $("#results").append(newDiv);
                     }
+
+                    getQuickFacts(recipeIdForFacts);
                 })
             }
 
+            // direct to next page when user clicks on recipe box
             $("#results").on("click", ".box", function (event) {
 
                 event.preventDefault();
@@ -265,6 +279,51 @@
                 window.location = "displayNutrients.html";
             })
 
+            // function to return quick facts on each recipe result
+            function getQuickFacts(ids) {
+                console.log(ids, typeof ids[0])
+
+                var bulkInfo = `https://api.spoonacular.com/recipes/informationBulk?apiKey=${key}&ids=${ids}&includeNutrition=true`
+
+                $.ajax({
+                    url: bulkInfo,
+                    method: "GET"
+                }).then(function(response) {
+                    var bulkLength = response.length;
+                    for (var i=0; i<bulkLength; i++) {
+
+                        var recipeIds = response[i].id;
+                        var recipeCard = $("#results").find(`[data-recipeid=${recipeIds}]`).find($(".content"));
+
+                        var macros = response[i].nutrition.caloricBreakdown;
+                        var likes = response[i].aggregateLikes.toString();
+                        var time = response[i].readyInMinutes.toString();
+                        var health = response[i].healthScore.toString();
+
+                        var likesPara = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                            text: `Likes: ${likes}`
+                            })
+                        var carbs = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                            text: `Carbs: ${macros.percentCarbs}%`
+                            })
+                        var healthScore = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                            text: `Health Score: ${health}%`
+                            })
+                        var protein = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                            text: `Protein: ${macros.percentProtein}%`
+                            });
+                        var timePara = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                            text: `Cook Time: ${time}`
+                            })
+                        var fat = $("<p>", {"class": "column is-half py-0 is-size-7 has-text-weight-semibold",
+                            text: `Fat: ${macros.percentFat}%`
+                            })
+
+                        recipeCard.append(likesPara,carbs,healthScore,protein,timePara,fat);
+                    }
+                    console.log(response);
+                })
+            }
         });
     </script>
 </body>

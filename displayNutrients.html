@@ -8,10 +8,11 @@
     <title>Recipe Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="chef.png">
     <style>
-        span {
+        span{  
             position: absolute;
             top: -2px;
             left: 50%;
@@ -19,89 +20,90 @@
         }
     </style>
     <script>
-        function resizeIframe(obj) {
-            obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-        }
+          function resizeIframe(obj) {
+                obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+            }
     </script>
 </head>
 
 <body>
-    <!-- logo for FoodFix -->
+    <!-- logo for NuTreent -->
     <section class="hero is fullheight">
         <div class="animate__animated animate__jackInTheBox">
-            <div class="hero-body">
-                <div class="container">
-                    <figure class="image">
-                        <img src="FoodFix2.png">
-                    </figure>
-                </div>
-
+        <div class="hero-body">
+            <div class="container">
+                <figure class="image">
+                    <img src="FoodFix2.png">
+                </figure>
             </div>
-        </div>
-        </div>
-    </section>
 
-    <!-- ingredients -->
+        </div>
+        </div>
+    </div>
+    </section>
+    
+    <!-- ingredients visualizer-->
     <section class="section pt-2">
         <p class="has-text-centered is-size-3 mb-4"><strong>Ingredients</strong></p>
         <div class="container box has-background-light">
-            <iframe class="responsive-iframe" id="previewWidget" frameborder="0" scrolling="no"
-                onload="resizeIframe(this)"></iframe>
+            <iframe class="responsive-iframe" id="previewWidget" frameborder="0" scrolling="no" onload="resizeIframe(this)" ></iframe>
         </div>
     </section>
-
+    
     <!-- Recipe Instructions -->
     <section class="section pt-2">
-        <p class="has-text-centered is-size-3 mb-4"><strong>Recipe Instructions</strong></p>
+        <p class="has-text-centered is-size-3 mb-4" id="recipeInstr"><strong>Recipe Instructions</strong></p>
         <div class="container box has-background-light">
             <!-- <div class=""> -->
-            <div class="content">
-                <ol id="instructions"></ol>
-            </div>
+                <div class="content">
+                    <ol id="instructions"></ol>
+                </div>
             <!-- </div>     -->
         </div>
     </section>
 
     <!-- nutrition facts -->
     <section class="section pt-2">
-        <p class="has-text-centered is-size-3"><strong>Nutrient Facts</strong></p>
+        <p class="has-text-centered is-size-3"><strong>Nutrient Facts Per Serving</strong></p>
         <p class="has-text-centered is-size-6 mb-4">(Percentage of Daily Needs)</p>
         <div class="container box has-background-light">
             <div class="columns is-variable is-8">
                 <div class="column is-half " id="progressGoodNutr">
-                    <h1 class="title is-5 mb-1 has-text-centered">Get Enough Of These</h1>
+                    <h1 class="title is-5 mb-1 has-text-centered">Get Enough Of These &#x1F4AA</h1>
                 </div>
                 <div class="column is-half" id="progressBadNutr">
-                    <h1 class="title is-5 mb-1 has-text-centered">Limit These</h1>
+                    <h1 class="title is-5 mb-1 has-text-centered">Limit These &#x270B</h1>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- footer -->
     <footer class="footer py-2">
         <div class="content has-text-centered">
             <p>
             <h6>©FoodFix 2020</h6>
             </p>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/those-icons" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
         </div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
-    <script>
 
+    <script>
         $(document).ready(function () {
 
             // get recipeId from localStorage
             var recipeId = localStorage.getItem("recipeId");
 
-            var key = '556eeedc826247eda5a71886bdd6ceb9';
+            var key = '30b94c03922c4786a86659dab622baff';
 
             getIngredients(recipeId);
             getNutrients(recipeId);
 
-            // function to get recipe ingredients
+            // function to get recipe ingredients & recipe instructions
             function getIngredients(recipeId) {
                 // URL for detailed ingredients
                 var ingredId = recipeId;
@@ -116,44 +118,62 @@
                     method: "GET"
                 }).then(function (response) {
                     console.log(response);
-                    let steps = response.analyzedInstructions[0].steps;
+                    var servings = response.servings;
+                    var steps = response.analyzedInstructions[0].steps;
+
+                    // show total servings
+                    if (servings === 1) {
+                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Serving)</strong>`);
+                    } else {
+                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Servings)</strong>`);
+                    }
+
+                    // add recipe instructions
                     for (var i = 0; i < steps.length; i++) {
                         var currentStep = steps[i].step;
-                        var lineItem = '<li class="has-text-weight-semibold">' + currentStep + '</li>';
+                        var lineItem = `<li class="has-text-weight-semibold">${currentStep}</li>`;
                         $("#instructions").append(lineItem);
                     }
+                    
+                    // add source url
+                    var source = $("<a>", {text: "Source Url",
+                        "class": "has-text-weight-semibold",
+                        href: `${response.sourceUrl}`,
+                        target: "_blank"});
+                    $("#instructions").prepend(source);
 
                     // declare variable that holds all ingredients information
                     var allIngr = '';
-                    var servings = response.servings;
                     var measure = 'us';
                     var viewStyle = 'grid';
                     var ingreds = response.extendedIngredients;
                     var time = response.readyInMinutes;
 
                     // for loop to loop through all items in response.extendedIngredients
-                    for (var i = 0, j = ingreds.length; i < j; i++) {
+                    for (var i=0, j=ingreds.length; i<j; i++) {
                         // combine ingredients into one string
-                        allIngr += (ingreds[i].originalString + '\n');
+                        allIngr += (ingreds[i].originalString+'\n');
                     }
 
                     previewIngredientWidget(ingVisualizerUrl, servings, measure, viewStyle, allIngr);
                 })
             }
 
-            function previewIngredientWidget(ingVisualizerUrl, servings, measure, viewStyle, ingredients) {
+            // API call for ingredients visualizer
+            function previewIngredientWidget(ingVisualizerUrl,servings, measure, viewStyle, ingredients) {
 
                 var xmlHttp = new XMLHttpRequest();
-                xmlHttp.onreadystatechange = function () {
+                xmlHttp.onreadystatechange = function() {
                     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                         previewIngredientWidgetCallback(xmlHttp.responseText);
                     }
                 }
 
                 xmlHttp.open("POST", ingVisualizerUrl, true);
-                xmlHttp.send('defaultCss=true&servings=' + servings + '&view=' + viewStyle + '&measure=' + measure + '&ingredientList=' + ingredients);
+                xmlHttp.send('defaultCss=true&servings='+servings+'&view='+viewStyle+'&measure='+measure+'&ingredientList='+ingredients);
             }
 
+            // function to add visualizer to iframe if API call successful
             function previewIngredientWidgetCallback(response) {
 
                 var iframeDoc = $("#previewWidget")[0].contentWindow.document;
@@ -221,18 +241,15 @@
                         var percentages = nutrientsBad[key].percentOfDailyNeeds;
                         var name = nutrientsBad[key].title;
                         var amount = nutrientsBad[key].amount;
-                        var newDivNutr = $("<div>", { text: `${name} ${amount}` });
-                        var newDiv = $("<div>", { "class": "container pb-1" });
+                        var newDivNutr = $("<div>",{text: `${name} ${amount}`});
+                        var newDiv = $("<div>", {"class": "container pb-1"});
                         var newSpan = $("<span>", {
-                            "class": "has-text-weight-bold", text: `${percentages}%`
-                        });
-                        var newProgress = $("<progress>",
-                            {
-                                "class": "progress is-warning",
-                                value: percentages,
-                                max: '100'
-                            });
-
+                            "class": "has-text-weight-bold", text: `${percentages}%`});
+                        var newProgress = $("<progress>", 
+                            {"class": "progress is-warning",
+                            value: percentages,
+                            max: '100'});
+                        
                         newDiv.append(newSpan, newProgress);
                         $("#progressBadNutr").append(newDivNutr, newDiv);
                     })
@@ -242,18 +259,15 @@
                         var percentages = nutrientsGood[key].percentOfDailyNeeds;
                         var name = nutrientsGood[key].title;
                         var amount = nutrientsGood[key].amount;
-                        var newDivNutr = $("<div>", { text: `${name} ${amount}` });
-                        var newDiv = $("<div>", { "class": "container pb-1" });
+                        var newDivNutr = $("<div>",{text: `${name} ${amount}`});
+                        var newDiv = $("<div>", {"class": "container pb-1"});
                         var newSpan = $("<span>", {
-                            "class": "has-text-weight-bold", text: `${percentages}%`
-                        });
-                        var newProgress = $("<progress>",
-                            {
-                                "class": "progress is-success",
-                                value: percentages,
-                                max: '100'
-                            });
-
+                            "class": "has-text-weight-bold", text: `${percentages}%`});
+                        var newProgress = $("<progress>", 
+                            {"class": "progress is-success",
+                            value: percentages,
+                            max: '100'});
+                        
                         newDiv.append(newSpan, newProgress);
                         $("#progressGoodNutr").append(newDivNutr, newDiv);
                     })
