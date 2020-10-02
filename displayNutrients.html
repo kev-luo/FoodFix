@@ -27,19 +27,17 @@
 </head>
 
 <body>
-    <!-- logo for NuTreent -->
+    <!-- logo for FoodFix -->
     <section class="hero is fullheight">
         <div class="animate__animated animate__jackInTheBox">
-        <div class="hero-body">
-            <div class="container">
-                <figure class="image">
-                    <img src="FoodFix2.png">
-                </figure>
+            <div class="hero-body">
+                <div class="container">
+                    <figure class="image">
+                        <img src="FoodFix2.png">
+                    </figure>
+                </div>
             </div>
-
         </div>
-        </div>
-    </div>
     </section>
     
     <!-- ingredients visualizer-->
@@ -98,7 +96,7 @@
             // get recipeId from localStorage
             var recipeId = localStorage.getItem("recipeId");
 
-            var key = 'e2e491702c444bfc9b9afffcfe43e996';
+            var key = '556eeedc826247eda5a71886bdd6ceb9';
 
             getIngredients(recipeId);
             getNutrients(recipeId);
@@ -215,14 +213,6 @@
                     // declare objects to store detailed nutrition facts
                     var nutrientsBad = {};
                     var nutrientsGood = {};
-
-                    // store overview facts in object. should this be displayed alongside recipe display?
-                    // var quickNutrFacts = {
-                    //     calories: response.calories,
-                    //     carbs: response.carbs,
-                    //     fat: response.fat,
-                    //     protein: response.protein
-                    // }
 
                     // store nutrition fact objects in objects
                     var badNutr = response.bad.length;
