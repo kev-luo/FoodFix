@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-​
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,7 @@
     <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="chef.png">
     <style>
         span{  
             position: absolute;
@@ -24,7 +25,7 @@
             }
     </script>
 </head>
-​
+
 <body>
     <!-- logo for NuTreent -->
     <section class="hero is fullheight">
@@ -35,13 +36,13 @@
                     <img src="FoodFix2.png">
                 </figure>
             </div>
-​
+
         </div>
         </div>
     </div>
     </section>
     
-    <!-- ingredients -->
+    <!-- ingredients visualizer-->
     <section class="section pt-2">
         <p class="has-text-centered is-size-3 mb-4"><strong>Ingredients</strong></p>
         <div class="container box has-background-light">
@@ -51,7 +52,7 @@
     
     <!-- Recipe Instructions -->
     <section class="section pt-2">
-        <p class="has-text-centered is-size-3 mb-4"><strong>Recipe Instructions</strong></p>
+        <p class="has-text-centered is-size-3 mb-4" id="recipeInstr"><strong>Recipe Instructions</strong></p>
         <div class="container box has-background-light">
             <!-- <div class=""> -->
                 <div class="content">
@@ -60,47 +61,49 @@
             <!-- </div>     -->
         </div>
     </section>
-​
+
     <!-- nutrition facts -->
     <section class="section pt-2">
-        <p class="has-text-centered is-size-3"><strong>Nutrient Facts</strong></p>
+        <p class="has-text-centered is-size-3"><strong>Nutrient Facts Per Serving</strong></p>
         <p class="has-text-centered is-size-6 mb-4">(Percentage of Daily Needs)</p>
         <div class="container box has-background-light">
             <div class="columns is-variable is-8">
                 <div class="column is-half " id="progressGoodNutr">
-                    <h1 class="title is-5 mb-1 has-text-centered">Get Enough Of These</h1>
+                    <h1 class="title is-5 mb-1 has-text-centered">Get Enough Of These &#x1F4AA</h1>
                 </div>
                 <div class="column is-half" id="progressBadNutr">
-                    <h1 class="title is-5 mb-1 has-text-centered">Limit These</h1>
+                    <h1 class="title is-5 mb-1 has-text-centered">Limit These &#x270B</h1>
                 </div>
             </div>
         </div>
     </section>
-​
+
+    <!-- footer -->
     <footer class="footer py-2">
         <div class="content has-text-centered">
             <p>
             <h6>©FoodFix 2020</h6>
             </p>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/those-icons" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
         </div>
     </footer>
-​
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
+
     <script>
-​
         $(document).ready(function () {
-​
+
             // get recipeId from localStorage
             var recipeId = localStorage.getItem("recipeId");
-​
-            var key = '556eeedc826247eda5a71886bdd6ceb9';
-​
+
+            var key = '30b94c03922c4786a86659dab622baff';
+
             getIngredients(recipeId);
             getNutrients(recipeId);
-​
-            // function to get recipe ingredients
+
+            // function to get recipe ingredients & recipe instructions
             function getIngredients(recipeId) {
                 // URL for detailed ingredients
                 var ingredId = recipeId;
@@ -108,93 +111,111 @@
                 var ingVisualizerUrl = `https://api.spoonacular.com/recipes/visualizeIngredients?apiKey=${key}`;
                 // ingredients list query url
                 var ingQueryUrl = `https://api.spoonacular.com/recipes/${ingredId}/information?apiKey=${key}`;
-​
+
                 // ajax call to get ingredients
                 $.ajax({
                     url: ingQueryUrl,
                     method: "GET"
                 }).then(function (response) {
                     console.log(response);
-                    let steps = response.analyzedInstructions[0].steps;
+                    var servings = response.servings;
+                    var steps = response.analyzedInstructions[0].steps;
+
+                    // show total servings
+                    if (servings === 1) {
+                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Serving)</strong>`);
+                    } else {
+                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Servings)</strong>`);
+                    }
+
+                    // add recipe instructions
                     for (var i = 0; i < steps.length; i++) {
                         var currentStep = steps[i].step;
-                        var lineItem = '<li class="has-text-weight-semibold">' + currentStep + '</li>';
+                        var lineItem = `<li class="has-text-weight-semibold">${currentStep}</li>`;
                         $("#instructions").append(lineItem);
                     }
-​
+                    
+                    // add source url
+                    var source = $("<a>", {text: "Source Url",
+                        "class": "has-text-weight-semibold",
+                        href: `${response.sourceUrl}`,
+                        target: "_blank"});
+                    $("#instructions").prepend(source);
+
                     // declare variable that holds all ingredients information
                     var allIngr = '';
-                    var servings = response.servings;
                     var measure = 'us';
                     var viewStyle = 'grid';
                     var ingreds = response.extendedIngredients;
                     var time = response.readyInMinutes;
-​
+
                     // for loop to loop through all items in response.extendedIngredients
                     for (var i=0, j=ingreds.length; i<j; i++) {
                         // combine ingredients into one string
                         allIngr += (ingreds[i].originalString+'\n');
                     }
-​
+
                     previewIngredientWidget(ingVisualizerUrl, servings, measure, viewStyle, allIngr);
                 })
             }
-​
+
+            // API call for ingredients visualizer
             function previewIngredientWidget(ingVisualizerUrl,servings, measure, viewStyle, ingredients) {
-​
+
                 var xmlHttp = new XMLHttpRequest();
                 xmlHttp.onreadystatechange = function() {
                     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                         previewIngredientWidgetCallback(xmlHttp.responseText);
                     }
                 }
-​
+
                 xmlHttp.open("POST", ingVisualizerUrl, true);
                 xmlHttp.send('defaultCss=true&servings='+servings+'&view='+viewStyle+'&measure='+measure+'&ingredientList='+ingredients);
             }
-​
+
+            // function to add visualizer to iframe if API call successful
             function previewIngredientWidgetCallback(response) {
-​
+
                 var iframeDoc = $("#previewWidget")[0].contentWindow.document;
                 iframeDoc.open();
                 iframeDoc.write(response);
                 iframeDoc.close();
-​
+
                 var scriptEl = $("<script>", {
                     type: "text/javascript",
                     src: "https://code.jquery.com/jquery-3.4.1.min.js"
                 });
                 var myFrameHead = $("#previewWidget").contents().find('head');
-​
+
                 myFrameHead.append(scriptEl);
-​
+
                 setTimeout(function () {
                     var scriptElTwo = $("<script>", {
                         type: "text/javascript",
                         src: "https://spoonacular.com/application/frontend/js/ingredientWidget.min.js?c=1"
                     })
-​
+
                     var myFrameBody = $("#previewWidget").contents().find('body');
                     myFrameBody.append(scriptElTwo);
                 }, 1000);
             }
-​
+
             // function to get nutrients
             function getNutrients(recipeId) {
                 // URL for recipe nutrition
                 var nutrId = recipeId;
                 var nutrQueryUrl = `https://api.spoonacular.com/recipes/${nutrId}/nutritionWidget.json?apiKey=${key}`
-​
+
                 // ajax call to get nutrients
                 $.ajax({
                     url: nutrQueryUrl,
                     get: "GET"
                 }).then(function (response) {
-​
+
                     // declare objects to store detailed nutrition facts
                     var nutrientsBad = {};
                     var nutrientsGood = {};
-​
+
                     // store overview facts in object. should this be displayed alongside recipe display?
                     // var quickNutrFacts = {
                     //     calories: response.calories,
@@ -202,19 +223,19 @@
                     //     fat: response.fat,
                     //     protein: response.protein
                     // }
-​
+
                     // store nutrition fact objects in objects
                     var badNutr = response.bad.length;
                     for (var i = 0; i < badNutr; i++) {
                         nutrientsBad[response.bad[i].title] = response.bad[i];
                     }
-​
+
                     // store nutrition fact objects in objects
                     var goodNutr = response.good.length;
                     for (var i = 0; i < goodNutr; i++) {
                         nutrientsGood[response.good[i].title] = response.good[i];
                     }
-​
+
                     // loop through bad nutrients and create progress bars
                     $.each(nutrientsBad, function (key) {
                         var percentages = nutrientsBad[key].percentOfDailyNeeds;
@@ -232,7 +253,7 @@
                         newDiv.append(newSpan, newProgress);
                         $("#progressBadNutr").append(newDivNutr, newDiv);
                     })
-​
+
                     // loop through good nutrients and create progress bars
                     $.each(nutrientsGood, function (key) {
                         var percentages = nutrientsGood[key].percentOfDailyNeeds;
@@ -250,14 +271,14 @@
                         newDiv.append(newSpan, newProgress);
                         $("#progressGoodNutr").append(newDivNutr, newDiv);
                     })
-​
+
                 })
             }
         });
-​
-​
-​
+
+
+
     </script>
 </body>
-​
+
 </html>
