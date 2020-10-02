@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.1/css/bulma.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="style.css">
     <title>Welcome to Nutreent!</title>
 </head>
@@ -16,16 +16,16 @@
     <!-- logo for NuTreent -->
     <section class="hero">
         <div class="animate__animated animate__jackInTheBox">
-        <div class="hero-body">
-            <div class="container">
-                <figure class="image">
-                    <img src="FoodFix2.png">
-                </figure>
-            </div>
+            <div class="hero-body">
+                <div class="container">
+                    <figure class="image">
+                        <img src="FoodFix2.png">
+                    </figure>
+                </div>
 
+            </div>
         </div>
         </div>
-    </div>
     </section>
     <!-- insert input section -->
     <section class="section has-background-info-light mx-6">
@@ -39,7 +39,7 @@
                     </span>
                 </div>
             </div>
-            <div class="field">       
+            <div class="field">
                 <label class="label is-medium">Number of Results</label>
                 <div class="control has-icons-left">
                     <input class="input" id="numResults" type="text" placeholder="Default 10">
@@ -50,7 +50,7 @@
             </div>
             <hr class="mb-1">
             <label class="label">Optional</label>
-                <!-- insert drop down menu bar for special diet plans -->
+            <!-- insert drop down menu bar for special diet plans -->
             <div class="field is-grouped">
                 <div class="field">
                     <label class="label has-text-grey">Dietary Plans</label>
@@ -94,7 +94,7 @@
         </container>
     </section>
 
-<!-- TODO: -->
+    <!-- TODO: -->
     <!-- recipes are stored here -->
     <div class="section">
         <!-- container class tightens the boxes towards the center -->
@@ -104,20 +104,20 @@
             </div>
         </div>
     </div>
-<!-- FIXME: -->
+    <!-- FIXME: -->
 
-<!-- TODO: -->
+    <!-- TODO: -->
     <!-- return modal if no results show up -->
     <div class="modal" id="noResultsFound">
         <div class="modal-background"></div>
         <div class="modal-content">
-          <div class="notification has-text-centered">
-            <h3>Your search returned no results, please try again.</h3>
-          </div>
+            <div class="notification has-text-centered">
+                <h3>Your search returned no results, please try again.</h3>
+            </div>
         </div>
         <button class="modal-close is-large"></button>
     </div>
-<!-- FIXME: -->
+    <!-- FIXME: -->
 
     <footer class="footer py-2">
         <div class="content has-text-centered">
@@ -133,10 +133,10 @@
     <script>
 
         $(document).ready(function () {
-            $(".box").mouseover(function() {
+            $(".box").mouseover(function () {
                 $(this).toggleClass("button is-outlined")
             })
-// TODO:    
+            // TODO:    
             var key = '556eeedc826247eda5a71886bdd6ceb9';
 
             var storedRecipe = localStorage.getItem("recipe")
@@ -155,19 +155,19 @@
                 }
             }
 
-            $(window).on("click", function(event) {
-                    $(".modal").removeClass("is-active");
+            $(window).on("click", function (event) {
+                $(".modal").removeClass("is-active");
             });
-// FIXME:
+            // FIXME:
             // event listener for submit button
             $("#searchBtn").on("click", function (event) {
-// TODO:
+                // TODO:
                 // empty currently displayed recipe listing
 
                 // if no food is specified, do not query and let user know
                 if ($("#recipe").val() === '') {
                     $("#recipe").addClass("is-danger");
-                    $("#mealField").append($("<p>", {"class": "is-danger help", id: "removeMe", text: "Please specify a meal."}))
+                    $("#mealField").append($("<p>", { "class": "is-danger help", id: "removeMe", text: "Please specify a meal." }))
                 } else {
                     $("#results").empty();
                     $("#recipe").removeClass("is-danger");
@@ -197,7 +197,7 @@
                     localStorage.setItem("diet", dietary);
                     localStorage.setItem("sortBy", sorting);
                 }
-// FIXME:                
+                // FIXME:                
             })
 
             // function to return list of recipes
@@ -207,7 +207,7 @@
                     url: queryUrl,
                     method: "GET"
                 }).then(function (response) {
-// TODO:
+                    // TODO:
                     if (response.totalResults === 0) {
                         $("#noResultsFound").addClass("is-active");
                     }
@@ -217,15 +217,15 @@
                     } else {
                         var numResultsOr = parseInt(numResults);
                     }
-                    
+
                     for (var i = 0; i < numResultsOr; i++) {
-// FIXME:
+                        // FIXME:
                         // create new box and article
-// TODO:
+                        // TODO:
                         // "column" & "is-half" ensures each box takes up half a row
-                        var newDiv = $("<div>", {"class": "column is-half"});
-                        var newBox = $("<a>", {"class": "box has-background-white-ter is-clickable" });
-// FIXME:                            
+                        var newDiv = $("<div>", { "class": "column is-half" });
+                        var newBox = $("<a>", { "class": "box has-background-white-ter is-clickable" });
+                        // FIXME:                            
                         newBox.attr("data-recipeId", response.results[i].id);
                         var newArticle = $("<article>", { "class": "media" });
 
@@ -241,8 +241,8 @@
                         newFig.append(newImg);
                         imgDiv.append(newFig);
 
-                        var paraDiv = $("<div>", {"class": "content"});
-                        var newHead = $("<h4>", {text: response.results[i].title});
+                        var paraDiv = $("<div>", { "class": "content" });
+                        var newHead = $("<h4>", { text: response.results[i].title });
 
                         paraDiv.append(newHead);
                         newArticle.append(imgDiv, paraDiv);
