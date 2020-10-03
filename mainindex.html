@@ -135,16 +135,15 @@
     <script>
         $(document).ready(function () {
 
-            // event listener to outline recipe boxes when hovered over
+            // event listener to outline recipe boxes when hovered over ==================
             $(".box").mouseover(function() {
                 $(this).toggleClass("button is-outlined")
             })
     
             var key = '59df629ffde7493d810c678d689d0889';
-
-            // if there is something in local storage, perform AJAX call
+            // if there is something in local storage, perform AJAX call =================
             if (localStorage.getItem("recipe") !== null) {
-            // get items from local storage
+                // get items from local storage
                 var storedRecipe = localStorage.getItem("recipe")
                 var storedNumResults = localStorage.getItem("reqResults")
                 var storedDietary = localStorage.getItem("diet")
@@ -158,21 +157,18 @@
                     getRecipes(storageQueryUrl, storedNumResults);
                 }
             }
-
-            // remove modal if user clicks anywhere outside modal
+            // remove modal if user clicks anywhere outside modal ========================
             $(window).on("click", function(event) {
                     $(".modal").removeClass("is-active");
             });
-
-            // event listener for submit button
+            // event listener for submit button ==========================================
             $("#searchBtn").on("click", function (event) {
-
-
-                // if no food is specified, do not query and let user know
+                // if no food is specified, do not make call and let user know
                 if ($("#recipe").val() === '') {
                     $("#recipe").addClass("is-danger");
                     $("#mealField").append($("<p>", {"class": "is-danger help", id: "removeMe", text: "Please specify a meal."}))
                 } else {
+                    // remove any recipe boxes previously displayed
                     $("#results").empty();
                     $("#recipe").removeClass("is-danger");
                     $("#removeMe").remove();
@@ -181,20 +177,18 @@
                     var numResults = $("#numResults").val();
                     var dietary = $("#diet").val();
                     var sorting = $("#sortBy").val();
-                    // URL for recipes
-                    var queryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${recipeSearch}&number=${numResults}&diet=${dietary}&sort=${sorting}&sortDirection=desc`;
-                    var queryUrlNoDiet = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${recipeSearch}&number=${numResults}&sort=${sorting}&sortDirection=desc`;
                     // clear user input
                     $("#recipe").val('');
                     $("#numResults").val('');
-
+                    // URL for recipes
+                    var queryUrl = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${recipeSearch}&number=${numResults}&diet=${dietary}&sort=${sorting}&sortDirection=desc`;
+                    var queryUrlNoDiet = `https://api.spoonacular.com/recipes/complexSearch?apiKey=${key}&query=${recipeSearch}&number=${numResults}&sort=${sorting}&sortDirection=desc`;
                     // call function to return list of recipes
                     if (dietary === 'None') {
                         getRecipes(queryUrlNoDiet, numResults);
                     } else {
                         getRecipes(queryUrl, numResults);
                     }
-
                     // set local storage
                     localStorage.setItem("recipe", recipeSearch);
                     localStorage.setItem("reqResults", numResults);
@@ -202,8 +196,7 @@
                     localStorage.setItem("sortBy", sorting);
                 }
             })
-
-            // function to return list of recipes
+            // function to return list of recipes ========================================
             function getRecipes(queryUrl, numResults) {
                 // ajax call to get recipes
                 $.ajax({
@@ -214,17 +207,14 @@
                     if (response.totalResults === 0) {
                         $("#noResultsFound").addClass("is-active");
                     }
-
                     // if user didn't input expected number of results, default is 10
                     if (numResults === '') {
                         var numResultsOr = 10;
                     } else {
                         var numResultsOr = parseInt(numResults);
                     }
-                    
                     // variable to hold recipe ID's to look up quick facts on nutrition
                     var recipeIdForFacts = '';
-
                     // for loop to display all recipe pictures and names
                     for (var i = 0; i < numResultsOr; i++) {
                         // concatenate all recipe ID's
@@ -233,29 +223,40 @@
                         } else {
                             recipeIdForFacts += response.results[i].id.toString() + ',';
                         }
-
-                        // "column" & "is-half" ensures each box takes up half a row
-                        var newDiv = $("<div>", {"class": "column is-half"});
-                        var newBox = $("<a>", {"class": "box has-background-white-ter is-clickable" });
-                          
+                        // create recipe boxes, "column" & "is-half" ensures each recipe box takes up half a row
+                        var newDiv = $("<div>", {
+                            "class": "column is-half"
+                        });
+                        var newBox = $("<a>", {
+                            "class": "box has-background-white-ter is-clickable" 
+                        });
                         newBox.attr("data-recipeId", response.results[i].id);
-                        var newArticle = $("<article>", { "class": "media" });
-
+                        // hold contents within each recipe box
+                        var newArticle = $("<article>", {
+                            "class": "media" 
+                        });
                         // create tags to hold image for each box
-                        var imgDiv = $("<div>", { "class": "media-left" });
-                        var newFig = $("<figure>", { "class": "image is-128x128" });
+                        var imgDiv = $("<div>", {
+                            "class": "media-left" 
+                        });
+                        var newFig = $("<figure>", {
+                            "class": "image is-128x128" 
+                        });
                         var newImg = $("<img>", {
                             src: response.results[i].image,
                             alt: response.results[i].title,
                             "class": "is-rounded"
                         });
-
                         newFig.append(newImg);
                         imgDiv.append(newFig);
-
-                        var paraDiv = $("<div>", {"class": "content columns is gapless is-multiline"});
-                        var newHead = $("<h5>", {"class": "column is-full pb-0", text: response.results[i].title});
-
+                        // make recipe title fill one row
+                        var paraDiv = $("<div>", {
+                            "class": "content columns is gapless is-multiline"
+                        });
+                        var newHead = $("<h5>", {
+                            "class": "column is-full pb-0", 
+                            text: response.results[i].title
+                        });
                         paraDiv.append(newHead);
                         newArticle.append(imgDiv, paraDiv);
                         newBox.append(newArticle);
@@ -266,24 +267,8 @@
                     getQuickFacts(recipeIdForFacts);
                 })
             }
-
-            // direct to next page when user clicks on recipe box
-            $("#results").on("click", ".box", function (event) {
-
-                event.preventDefault();
-
-                // save clicked item recipeId to local storage
-                var recipeId = $(this).attr("data-recipeId");
-                localStorage.setItem("recipeId", recipeId);
-
-                // redirect to next displayNutrients page
-                window.location = "displayNutrients.html";
-            })
-
-            // function to return quick facts on each recipe result
+            // function to return quick facts on each recipe result ======================
             function getQuickFacts(ids) {
-                console.log(ids, typeof ids[0])
-
                 var bulkInfo = `https://api.spoonacular.com/recipes/informationBulk?apiKey=${key}&ids=${ids}&includeNutrition=true`;
 
                 $.ajax({
@@ -292,44 +277,53 @@
                 }).then(function(response) {
                     var bulkLength = response.length;
                     for (var i=0; i<bulkLength; i++) {
-
+                        // variables to hold information
                         var recipeIds = response[i].id;
-                        var recipeCard = $("#results").find(`[data-recipeid=${recipeIds}]`).find($(".content"));
-
                         var macros = response[i].nutrition.caloricBreakdown;
                         var likes = response[i].aggregateLikes.toString();
                         var time = response[i].readyInMinutes.toString();
                         var health = response[i].healthScore.toString();
-
+                        // create elements to hold quick facts, organized as two columns within each recipe card
                         var likesPara = $("<p>", {
                             "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Likes: ${likes}`
-                            })
+                        })
                         var carbs = $("<p>", {
                             "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Carbs: ${macros.percentCarbs}%`
-                            })
+                        })
                         var healthScore = $("<p>", {
                             "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Health Score: ${health}%`
-                            })
+                        })
                         var protein = $("<p>", {
                             "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Protein: ${macros.percentProtein}%`
-                            });
+                        });
                         var timePara = $("<p>", {
                             "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Cook Time: ${time}`
-                            })
+                        })
                         var fat = $("<p>", {
                             "class": "column is-half py-0 is-size-7 has-text-weight-semibold",
                             text: `Fat: ${macros.percentFat}%`
-                            })
+                        })
+                        // locate recipe box with the data-recipeid attribute equal to recipe id of the current iteration
+                        var recipeCard = $("#results").find(`[data-recipeid=${recipeIds}]`).find($(".content"));
 
                         recipeCard.append(likesPara,carbs,healthScore,protein,timePara,fat);
                     }
                 })
             }
+            // direct to next page when user clicks on recipe box ========================
+            $("#results").on("click", ".box", function (event) {
+                event.preventDefault();
+                // save clicked item recipeId to local storage
+                var recipeId = $(this).attr("data-recipeId");
+                localStorage.setItem("recipeId", recipeId);
+                // redirect to next displayNutrients page
+                window.location = "displayNutrients.html";
+            })
         });
     </script>
 </body>

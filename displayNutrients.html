@@ -87,7 +87,7 @@
     <script>
         $(document).ready(function () {
 
-            // get recipeId from localStorage
+            // get recipeId from localStorage ============================================
             var recipeId = localStorage.getItem("recipeId");
 
             var key = '59df629ffde7493d810c678d689d0889';
@@ -95,7 +95,7 @@
             getIngredients(recipeId);
             getNutrients(recipeId);
 
-            // function to get recipe ingredients & recipe instructions
+            // function to get recipe ingredients & recipe instructions ===================
             function getIngredients(recipeId) {
                 // URL for detailed ingredients
                 var ingredId = recipeId;
@@ -155,8 +155,7 @@
                     }
                 })
             }
-
-            // API call for ingredients visualizer
+            // API call for ingredients visualizer ========================================
             function previewIngredientWidget(servings, measure, viewStyle, ingredients) {
                 // visualize nutrition query url 
                 var ingVisualizerUrl = `https://api.spoonacular.com/recipes/visualizeIngredients?apiKey=${key}`;
@@ -175,8 +174,7 @@
                     previewIngredientWidgetCallback(response);  
                 });
             }
-
-            // function to add visualizer to iframe if API call successful
+            // function to add visualizer to iframe if API call successful ================
             function previewIngredientWidgetCallback(response) {
 
                 // write response to iframe document
@@ -202,13 +200,11 @@
                 $("#previewWidget").contents().find(".spoonacular-ingredients-menu").remove();
                 $("#previewWidget").contents().find("body").find("div").last().remove();
             }
-
-            // dynamic iframe resizing based on content height
+            // dynamic iframe resizing based on content height ============================
             $("#previewWidget").on("load", function() {
                 this.style.height = this.contentWindow.document.documentElement.scrollHeight + 'px';
             });
-
-            // function to get nutrients
+            // function to get nutrients ==================================================
             function getNutrients(recipeId) {
                 // URL for recipe nutrition
                 var nutrId = recipeId;
