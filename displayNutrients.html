@@ -96,7 +96,7 @@
             // get recipeId from localStorage
             var recipeId = localStorage.getItem("recipeId");
 
-            var key = '556eeedc826247eda5a71886bdd6ceb9';
+            var key = '59df629ffde7493d810c678d689d0889';
 
             getIngredients(recipeId);
             getNutrients(recipeId);
@@ -105,8 +105,6 @@
             function getIngredients(recipeId) {
                 // URL for detailed ingredients
                 var ingredId = recipeId;
-                // visualize nutrition query url 
-                var ingVisualizerUrl = `https://api.spoonacular.com/recipes/visualizeIngredients?apiKey=${key}`;
                 // ingredients list query url
                 var ingQueryUrl = `https://api.spoonacular.com/recipes/${ingredId}/information?apiKey=${key}`;
 
@@ -129,15 +127,20 @@
                     // add recipe instructions
                     for (var i = 0; i < steps.length; i++) {
                         var currentStep = steps[i].step;
-                        var lineItem = `<li class="has-text-weight-semibold">${currentStep}</li>`;
+                        var lineItem = $("<li>", {
+                            "class": "has-text-weight-semibold", 
+                            text: `${currentStep}`
+                        })
                         $("#instructions").append(lineItem);
                     }
                     
                     // add source url
-                    var source = $("<a>", {text: "Source Url",
+                    var source = $("<a>", {
+                        text: "Source Url",
                         "class": "has-text-weight-semibold",
                         href: `${response.sourceUrl}`,
-                        target: "_blank"});
+                        target: "_blank"
+                    });
                     $("#instructions").prepend(source);
 
                     // declare variable that holds all ingredients information
@@ -153,22 +156,28 @@
                         allIngr += (ingreds[i].originalString+'\n');
                     }
 
-                    previewIngredientWidget(ingVisualizerUrl, servings, measure, viewStyle, allIngr);
+                    previewIngredientWidget(servings, measure, viewStyle, allIngr);
                 })
             }
 
             // API call for ingredients visualizer
-            function previewIngredientWidget(ingVisualizerUrl,servings, measure, viewStyle, ingredients) {
+            function previewIngredientWidget(servings, measure, viewStyle, ingredients) {
+                // visualize nutrition query url 
+                var ingVisualizerUrl = `https://api.spoonacular.com/recipes/visualizeIngredients?apiKey=${key}`;
 
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.onreadystatechange = function() {
-                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                        previewIngredientWidgetCallback(xmlHttp.responseText);
+                $.ajax({
+                    url: ingVisualizerUrl,
+                    method: "POST",
+                    data: {
+                        'defaultCss': 'true',
+                        'servings': servings.toString(),
+                        'view': viewStyle,
+                        'measure': measure,
+                        'ingredientList': ingredients
                     }
-                }
-
-                xmlHttp.open("POST", ingVisualizerUrl, true);
-                xmlHttp.send('defaultCss=true&servings='+servings+'&view='+viewStyle+'&measure='+measure+'&ingredientList='+ingredients);
+                }).then(function(response) {
+                    previewIngredientWidgetCallback(response);  
+                });
             }
 
             // function to add visualizer to iframe if API call successful
@@ -180,22 +189,17 @@
                 iframeDoc.close();
 
                 var scriptEl = $("<script>", {
-                    type: "text/javascript",
                     src: "https://code.jquery.com/jquery-3.4.1.min.js"
                 });
                 var myFrameHead = $("#previewWidget").contents().find('head');
-
                 myFrameHead.append(scriptEl);
 
-                setTimeout(function () {
-                    var scriptElTwo = $("<script>", {
-                        type: "text/javascript",
-                        src: "https://spoonacular.com/application/frontend/js/ingredientWidget.min.js?c=1"
-                    })
+                var scriptElTwo = $("<script>", {
+                    src: "https://spoonacular.com/application/frontend/js/ingredientWidget.min.js?c=1"
+                })
+                var myFrameBody = $("#previewWidget").contents().find('body');
+                myFrameBody.append(scriptElTwo);
 
-                    var myFrameBody = $("#previewWidget").contents().find('body');
-                    myFrameBody.append(scriptElTwo);
-                }, 1000);
             }
 
             // function to get nutrients
@@ -231,15 +235,21 @@
                         var percentages = nutrientsBad[key].percentOfDailyNeeds;
                         var name = nutrientsBad[key].title;
                         var amount = nutrientsBad[key].amount;
-                        var newDivNutr = $("<div>",{text: `${name} ${amount}`});
-                        var newDiv = $("<div>", {"class": "container pb-1"});
+                        var newDivNutr = $("<div>",{
+                            text: `${name} ${amount}`
+                        });
+                        var newDiv = $("<div>", {
+                            "class": "container pb-1"
+                        });
                         var newSpan = $("<span>", {
-                            "class": "has-text-weight-bold", text: `${percentages}%`});
-                        var newProgress = $("<progress>", 
-                            {"class": "progress is-warning",
+                            "class": "has-text-weight-bold", 
+                            text: `${percentages}%`
+                        });
+                        var newProgress = $("<progress>", {
+                            "class": "progress is-warning",
                             value: percentages,
-                            max: '100'});
-                        
+                            max: '100'
+                        });
                         newDiv.append(newSpan, newProgress);
                         $("#progressBadNutr").append(newDivNutr, newDiv);
                     })
@@ -249,15 +259,21 @@
                         var percentages = nutrientsGood[key].percentOfDailyNeeds;
                         var name = nutrientsGood[key].title;
                         var amount = nutrientsGood[key].amount;
-                        var newDivNutr = $("<div>",{text: `${name} ${amount}`});
-                        var newDiv = $("<div>", {"class": "container pb-1"});
+                        var newDivNutr = $("<div>",{
+                            text: `${name} ${amount}`
+                        });
+                        var newDiv = $("<div>", {
+                            "class": "container pb-1"
+                        });
                         var newSpan = $("<span>", {
-                            "class": "has-text-weight-bold", text: `${percentages}%`});
-                        var newProgress = $("<progress>", 
-                            {"class": "progress is-success",
+                            "class": "has-text-weight-bold", 
+                            text: `${percentages}%`
+                        });
+                        var newProgress = $("<progress>", {
+                            "class": "progress is-success",
                             value: percentages,
-                            max: '100'});
-                        
+                            max: '100'
+                        });
                         newDiv.append(newSpan, newProgress);
                         $("#progressGoodNutr").append(newDivNutr, newDiv);
                     })
