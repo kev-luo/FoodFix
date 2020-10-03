@@ -19,11 +19,6 @@
             font-size: 12px;
         }
     </style>
-    <script>
-          function resizeIframe(obj) {
-                obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-            }
-    </script>
 </head>
 
 <body>
@@ -42,9 +37,9 @@
     
     <!-- ingredients visualizer-->
     <section class="section pt-2">
-        <p class="has-text-centered is-size-3 mb-4"><strong>Ingredients</strong></p>
+        <p class="has-text-centered is-size-3 mb-4" id="ingrVis"><strong>Ingredients</strong></p>
         <div class="container box has-background-light">
-            <iframe class="responsive-iframe" id="previewWidget" frameborder="0" onload="resizeIframe(this)" ></iframe>
+            <iframe class="responsive-iframe" id="previewWidget" frameborder="0"></iframe>
         </div>
     </section>
     
@@ -88,7 +83,6 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
 
     <script>
         $(document).ready(function () {
@@ -113,28 +107,35 @@
                     url: ingQueryUrl,
                     method: "GET"
                 }).then(function (response) {
-                    console.log(response);
+                    // declare variable that holds all ingredients information
+                    var allIngr = '';
+                    var measure = 'us';
+                    var viewStyle = 'grid';
+                    var ingreds = response.extendedIngredients;
+                    var time = response.readyInMinutes;
+                    // recipe instructions & number of servings
                     var servings = response.servings;
                     var steps = response.analyzedInstructions[0].steps;
 
-                    // show total servings
+                    // for loop to loop through all items in response.extendedIngredients
+                    for (var i=0, j=ingreds.length; i<j; i++) {
+                        // combine ingredients into one string
+                        allIngr += (ingreds[i].originalString+'\n');
+                    }
+
+                    // show recipe name in ingredients title
+                    $("#ingrVis").html(`<strong>${response.title}: Ingredients</strong>`);
+
+                    previewIngredientWidget(servings, measure, viewStyle, allIngr);
+
+                    // show total servings in recipe instructions title
                     if (servings === 1) {
                         $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Serving)</strong>`);
                     } else {
                         $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Servings)</strong>`);
                     }
-
-                    // add recipe instructions
-                    for (var i = 0; i < steps.length; i++) {
-                        var currentStep = steps[i].step;
-                        var lineItem = $("<li>", {
-                            "class": "has-text-weight-semibold", 
-                            text: `${currentStep}`
-                        })
-                        $("#instructions").append(lineItem);
-                    }
                     
-                    // add source url
+                    // display source url at top of recipe instructions
                     var source = $("<a>", {
                         text: "Source Url",
                         "class": "has-text-weight-semibold",
@@ -143,20 +144,15 @@
                     });
                     $("#instructions").prepend(source);
 
-                    // declare variable that holds all ingredients information
-                    var allIngr = '';
-                    var measure = 'us';
-                    var viewStyle = 'grid';
-                    var ingreds = response.extendedIngredients;
-                    var time = response.readyInMinutes;
-
-                    // for loop to loop through all items in response.extendedIngredients
-                    for (var i=0, j=ingreds.length; i<j; i++) {
-                        // combine ingredients into one string
-                        allIngr += (ingreds[i].originalString+'\n');
+                    // for loop to display recipe instructions
+                    for (var i = 0; i < steps.length; i++) {
+                        var currentStep = steps[i].step;
+                        var lineItem = $("<li>", {
+                            "class": "has-text-weight-semibold", 
+                            text: `${currentStep}`
+                        })
+                        $("#instructions").append(lineItem);
                     }
-
-                    previewIngredientWidget(servings, measure, viewStyle, allIngr);
                 })
             }
 
@@ -164,7 +160,7 @@
             function previewIngredientWidget(servings, measure, viewStyle, ingredients) {
                 // visualize nutrition query url 
                 var ingVisualizerUrl = `https://api.spoonacular.com/recipes/visualizeIngredients?apiKey=${key}`;
-
+                // post request, ingredient visualizer 
                 $.ajax({
                     url: ingVisualizerUrl,
                     method: "POST",
@@ -183,11 +179,13 @@
             // function to add visualizer to iframe if API call successful
             function previewIngredientWidgetCallback(response) {
 
+                // write response to iframe document
                 var iframeDoc = $("#previewWidget")[0].contentWindow.document;
                 iframeDoc.open();
                 iframeDoc.write(response);
                 iframeDoc.close();
 
+                // create script tags for iframe and append to iframe
                 var scriptEl = $("<script>", {
                     src: "https://code.jquery.com/jquery-3.4.1.min.js"
                 });
@@ -200,7 +198,15 @@
                 var myFrameBody = $("#previewWidget").contents().find('body');
                 myFrameBody.append(scriptElTwo);
 
+                // remove header and footer of ingredient visualizer widget
+                $("#previewWidget").contents().find(".spoonacular-ingredients-menu").remove();
+                $("#previewWidget").contents().find("body").find("div").last().remove();
             }
+
+            // dynamic iframe resizing based on content height
+            $("#previewWidget").on("load", function() {
+                this.style.height = this.contentWindow.document.documentElement.scrollHeight + 'px';
+            });
 
             // function to get nutrients
             function getNutrients(recipeId) {
@@ -223,8 +229,6 @@
                     for (var i = 0; i < badNutr; i++) {
                         nutrientsBad[response.bad[i].title] = response.bad[i];
                     }
-
-                    // store nutrition fact objects in objects
                     var goodNutr = response.good.length;
                     for (var i = 0; i < goodNutr; i++) {
                         nutrientsGood[response.good[i].title] = response.good[i];
@@ -281,9 +285,6 @@
                 })
             }
         });
-
-
-
     </script>
 </body>
 
