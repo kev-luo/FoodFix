@@ -134,12 +134,6 @@
 
     <script>
         $(document).ready(function () {
-
-            // event listener to outline recipe boxes when hovered over ==================
-            $(".box").mouseover(function() {
-                $(this).toggleClass("button is-outlined")
-            })
-    
             var key = '59df629ffde7493d810c678d689d0889';
             // if there is something in local storage, perform AJAX call =================
             if (localStorage.getItem("recipe") !== null) {
@@ -157,16 +151,31 @@
                     getRecipes(storageQueryUrl, storedNumResults);
                 }
             }
+            // event listener to outline recipe boxes when hovered over ==================
+            $(".box").mouseover(function() {
+                $(this).toggleClass("button is-outlined")
+            })
             // remove modal if user clicks anywhere outside modal ========================
             $(window).on("click", function(event) {
-                    $(".modal").removeClass("is-active");
+                $(".modal").removeClass("is-active");
             });
+            // direct to next page when user clicks on recipe box ========================
+            $("#results").on("click", ".box", function (event) {
+                event.preventDefault();
+                // save clicked item recipeId to local storage
+                var recipeId = $(this).attr("data-recipeId");
+                localStorage.setItem("recipeId", recipeId);
+                // redirect to next displayNutrients page
+                window.location = "displayNutrients.html";
+            })
             // event listener for submit button ==========================================
             $("#searchBtn").on("click", function (event) {
                 // if no food is specified, do not make call and let user know
                 if ($("#recipe").val() === '') {
                     $("#recipe").addClass("is-danger");
-                    $("#mealField").append($("<p>", {"class": "is-danger help", id: "removeMe", text: "Please specify a meal."}))
+                    if ($("#mealField").children().length === 2) {
+                        $("#mealField").append($("<p>", {"class": "is-danger help", id: "removeMe", text: "Please specify a meal."}))
+                    }
                 } else {
                     // remove any recipe boxes previously displayed
                     $("#results").empty();
@@ -315,15 +324,6 @@
                     }
                 })
             }
-            // direct to next page when user clicks on recipe box ========================
-            $("#results").on("click", ".box", function (event) {
-                event.preventDefault();
-                // save clicked item recipeId to local storage
-                var recipeId = $(this).attr("data-recipeId");
-                localStorage.setItem("recipeId", recipeId);
-                // redirect to next displayNutrients page
-                window.location = "displayNutrients.html";
-            })
         });
     </script>
 </body>
