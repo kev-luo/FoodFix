@@ -10,7 +10,7 @@
     <script defer src="https://use.fontawesome.com/releases/v5.14.0/js/all.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="chef.png">
+    <link rel="icon" type="image/png" href="assets/images/chef.png">
     <style>
         span{  
             position: absolute;
@@ -19,11 +19,6 @@
             font-size: 12px;
         }
     </style>
-    <script>
-          function resizeIframe(obj) {
-                obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-            }
-    </script>
 </head>
 
 <body>
@@ -33,7 +28,7 @@
             <div class="hero-body">
                 <div class="container">
                     <figure class="image">
-                        <img src="FoodFix2.png">
+                        <img src="assets/images/FoodFix2.png">
                     </figure>
                 </div>
             </div>
@@ -42,9 +37,9 @@
     
     <!-- ingredients visualizer-->
     <section class="section pt-2">
-        <p class="has-text-centered is-size-3 mb-4"><strong>Ingredients</strong></p>
+        <p class="has-text-centered is-size-3 mb-4" id="ingrVis"><strong>Ingredients</strong></p>
         <div class="container box has-background-light">
-            <iframe class="responsive-iframe" id="previewWidget" frameborder="0" onload="resizeIframe(this)" ></iframe>
+            <iframe class="responsive-iframe" id="previewWidget" frameborder="0"></iframe>
         </div>
     </section>
     
@@ -88,25 +83,22 @@
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
 
     <script>
         $(document).ready(function () {
 
-            // get recipeId from localStorage
+            // get recipeId from localStorage ============================================
             var recipeId = localStorage.getItem("recipeId");
 
-            var key = '556eeedc826247eda5a71886bdd6ceb9';
+            var key = '59df629ffde7493d810c678d689d0889';
 
             getIngredients(recipeId);
             getNutrients(recipeId);
 
-            // function to get recipe ingredients & recipe instructions
+            // function to get recipe ingredients & recipe instructions ===================
             function getIngredients(recipeId) {
                 // URL for detailed ingredients
                 var ingredId = recipeId;
-                // visualize nutrition query url 
-                var ingVisualizerUrl = `https://api.spoonacular.com/recipes/visualizeIngredients?apiKey=${key}`;
                 // ingredients list query url
                 var ingQueryUrl = `https://api.spoonacular.com/recipes/${ingredId}/information?apiKey=${key}`;
 
@@ -115,37 +107,15 @@
                     url: ingQueryUrl,
                     method: "GET"
                 }).then(function (response) {
-                    console.log(response);
-                    var servings = response.servings;
-                    var steps = response.analyzedInstructions[0].steps;
-
-                    // show total servings
-                    if (servings === 1) {
-                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Serving)</strong>`);
-                    } else {
-                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Servings)</strong>`);
-                    }
-
-                    // add recipe instructions
-                    for (var i = 0; i < steps.length; i++) {
-                        var currentStep = steps[i].step;
-                        var lineItem = `<li class="has-text-weight-semibold">${currentStep}</li>`;
-                        $("#instructions").append(lineItem);
-                    }
-                    
-                    // add source url
-                    var source = $("<a>", {text: "Source Url",
-                        "class": "has-text-weight-semibold",
-                        href: `${response.sourceUrl}`,
-                        target: "_blank"});
-                    $("#instructions").prepend(source);
-
                     // declare variable that holds all ingredients information
                     var allIngr = '';
                     var measure = 'us';
                     var viewStyle = 'grid';
                     var ingreds = response.extendedIngredients;
                     var time = response.readyInMinutes;
+                    // recipe instructions & number of servings
+                    var servings = response.servings;
+                    var steps = response.analyzedInstructions[0].steps;
 
                     // for loop to loop through all items in response.extendedIngredients
                     for (var i=0, j=ingreds.length; i<j; i++) {
@@ -153,52 +123,88 @@
                         allIngr += (ingreds[i].originalString+'\n');
                     }
 
-                    previewIngredientWidget(ingVisualizerUrl, servings, measure, viewStyle, allIngr);
+                    // show recipe name in ingredients title
+                    $("#ingrVis").html(`<strong>${response.title}: Ingredients</strong>`);
+
+                    previewIngredientWidget(servings, measure, viewStyle, allIngr);
+
+                    // show total servings in recipe instructions title
+                    if (servings === 1) {
+                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Serving)</strong>`);
+                    } else {
+                        $("#recipeInstr").html(`<strong>Recipe Instructions (${servings} Servings)</strong>`);
+                    }
+                    
+                    // display source url at top of recipe instructions
+                    var source = $("<a>", {
+                        text: "Source Url",
+                        "class": "has-text-weight-semibold",
+                        href: `${response.sourceUrl}`,
+                        target: "_blank"
+                    });
+                    $("#instructions").prepend(source);
+
+                    // for loop to display recipe instructions
+                    for (var i = 0; i < steps.length; i++) {
+                        var currentStep = steps[i].step;
+                        var lineItem = $("<li>", {
+                            "class": "has-text-weight-semibold", 
+                            text: `${currentStep}`
+                        })
+                        $("#instructions").append(lineItem);
+                    }
                 })
             }
-
-            // API call for ingredients visualizer
-            function previewIngredientWidget(ingVisualizerUrl,servings, measure, viewStyle, ingredients) {
-
-                var xmlHttp = new XMLHttpRequest();
-                xmlHttp.onreadystatechange = function() {
-                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-                        previewIngredientWidgetCallback(xmlHttp.responseText);
+            // API call for ingredients visualizer ========================================
+            function previewIngredientWidget(servings, measure, viewStyle, ingredients) {
+                // visualize nutrition query url 
+                var ingVisualizerUrl = `https://api.spoonacular.com/recipes/visualizeIngredients?apiKey=${key}`;
+                // post request, ingredient visualizer 
+                $.ajax({
+                    url: ingVisualizerUrl,
+                    method: "POST",
+                    data: {
+                        'defaultCss': 'true',
+                        'servings': servings.toString(),
+                        'view': viewStyle,
+                        'measure': measure,
+                        'ingredientList': ingredients
                     }
-                }
-
-                xmlHttp.open("POST", ingVisualizerUrl, true);
-                xmlHttp.send('defaultCss=true&servings='+servings+'&view='+viewStyle+'&measure='+measure+'&ingredientList='+ingredients);
+                }).then(function(response) {
+                    previewIngredientWidgetCallback(response);  
+                });
             }
-
-            // function to add visualizer to iframe if API call successful
+            // function to add visualizer to iframe if API call successful ================
             function previewIngredientWidgetCallback(response) {
 
+                // write response to iframe document
                 var iframeDoc = $("#previewWidget")[0].contentWindow.document;
                 iframeDoc.open();
                 iframeDoc.write(response);
                 iframeDoc.close();
 
+                // create script tags for iframe and append to iframe
                 var scriptEl = $("<script>", {
-                    type: "text/javascript",
                     src: "https://code.jquery.com/jquery-3.4.1.min.js"
                 });
                 var myFrameHead = $("#previewWidget").contents().find('head');
-
                 myFrameHead.append(scriptEl);
 
-                setTimeout(function () {
-                    var scriptElTwo = $("<script>", {
-                        type: "text/javascript",
-                        src: "https://spoonacular.com/application/frontend/js/ingredientWidget.min.js?c=1"
-                    })
+                var scriptElTwo = $("<script>", {
+                    src: "https://spoonacular.com/application/frontend/js/ingredientWidget.min.js?c=1"
+                })
+                var myFrameBody = $("#previewWidget").contents().find('body');
+                myFrameBody.append(scriptElTwo);
 
-                    var myFrameBody = $("#previewWidget").contents().find('body');
-                    myFrameBody.append(scriptElTwo);
-                }, 1000);
+                // remove header and footer of ingredient visualizer widget
+                $("#previewWidget").contents().find(".spoonacular-ingredients-menu").remove();
+                $("#previewWidget").contents().find("body").find("div").last().remove();
             }
-
-            // function to get nutrients
+            // dynamic iframe resizing based on content height ============================
+            $("#previewWidget").on("load", function() {
+                this.style.height = this.contentWindow.document.documentElement.scrollHeight + 'px';
+            });
+            // function to get nutrients ==================================================
             function getNutrients(recipeId) {
                 // URL for recipe nutrition
                 var nutrId = recipeId;
@@ -219,8 +225,6 @@
                     for (var i = 0; i < badNutr; i++) {
                         nutrientsBad[response.bad[i].title] = response.bad[i];
                     }
-
-                    // store nutrition fact objects in objects
                     var goodNutr = response.good.length;
                     for (var i = 0; i < goodNutr; i++) {
                         nutrientsGood[response.good[i].title] = response.good[i];
@@ -231,15 +235,21 @@
                         var percentages = nutrientsBad[key].percentOfDailyNeeds;
                         var name = nutrientsBad[key].title;
                         var amount = nutrientsBad[key].amount;
-                        var newDivNutr = $("<div>",{text: `${name} ${amount}`});
-                        var newDiv = $("<div>", {"class": "container pb-1"});
+                        var newDivNutr = $("<div>",{
+                            text: `${name} ${amount}`
+                        });
+                        var newDiv = $("<div>", {
+                            "class": "container pb-1"
+                        });
                         var newSpan = $("<span>", {
-                            "class": "has-text-weight-bold", text: `${percentages}%`});
-                        var newProgress = $("<progress>", 
-                            {"class": "progress is-warning",
+                            "class": "has-text-weight-bold", 
+                            text: `${percentages}%`
+                        });
+                        var newProgress = $("<progress>", {
+                            "class": "progress is-warning",
                             value: percentages,
-                            max: '100'});
-                        
+                            max: '100'
+                        });
                         newDiv.append(newSpan, newProgress);
                         $("#progressBadNutr").append(newDivNutr, newDiv);
                     })
@@ -249,15 +259,21 @@
                         var percentages = nutrientsGood[key].percentOfDailyNeeds;
                         var name = nutrientsGood[key].title;
                         var amount = nutrientsGood[key].amount;
-                        var newDivNutr = $("<div>",{text: `${name} ${amount}`});
-                        var newDiv = $("<div>", {"class": "container pb-1"});
+                        var newDivNutr = $("<div>",{
+                            text: `${name} ${amount}`
+                        });
+                        var newDiv = $("<div>", {
+                            "class": "container pb-1"
+                        });
                         var newSpan = $("<span>", {
-                            "class": "has-text-weight-bold", text: `${percentages}%`});
-                        var newProgress = $("<progress>", 
-                            {"class": "progress is-success",
+                            "class": "has-text-weight-bold", 
+                            text: `${percentages}%`
+                        });
+                        var newProgress = $("<progress>", {
+                            "class": "progress is-success",
                             value: percentages,
-                            max: '100'});
-                        
+                            max: '100'
+                        });
                         newDiv.append(newSpan, newProgress);
                         $("#progressGoodNutr").append(newDivNutr, newDiv);
                     })
@@ -265,9 +281,6 @@
                 })
             }
         });
-
-
-
     </script>
 </body>
 
