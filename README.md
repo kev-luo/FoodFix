@@ -74,7 +74,7 @@ The getNutrients function performs the final API call on this page. The response
 ## Authors
 **Kevin Luo**
 - [Github](https://github.com/kev-luo)
-- [LinkedIn](https://www.linkedin.com/in/kevinluo49)
+- [LinkedIn](https://www.linkedin.com/in/kevinluo49/)
 
 **Kelly Kim** 
 - [Github](https://github.com/kellykim831)
