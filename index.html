@@ -212,6 +212,7 @@
                     url: queryUrl,
                     method: "GET"
                 }).then(function (response) {
+                    console.log('recipes', response);
                     // if no results are found, show modal
                     if (response.totalResults === 0) {
                         $("#noResultsFound").addClass("is-active");
@@ -284,6 +285,7 @@
                     url: bulkInfo,
                     method: "GET"
                 }).then(function(response) {
+                    console.log('quickfacts', response);
                     var bulkLength = response.length;
                     for (var i=0; i<bulkLength; i++) {
                         // variables to hold information

@@ -107,6 +107,7 @@
                     url: ingQueryUrl,
                     method: "GET"
                 }).then(function (response) {
+                    console.log('getRecipe', response);
                     // declare variable that holds all ingredients information
                     var allIngr = '';
                     var measure = 'us';
@@ -172,6 +173,7 @@
                     }
                 }).then(function(response) {
                     previewIngredientWidgetCallback(response);  
+                    console.log('ingredientsWidg', response);
                 });
             }
             // function to add visualizer to iframe if API call successful ================
@@ -215,7 +217,7 @@
                     url: nutrQueryUrl,
                     get: "GET"
                 }).then(function (response) {
-
+                    console.log('getNutrients', response);
                     // declare objects to store detailed nutrition facts
                     var nutrientsBad = {};
                     var nutrientsGood = {};
