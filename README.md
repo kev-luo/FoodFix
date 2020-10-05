@@ -1,5 +1,5 @@
 # Food Fix
-
+![GitHub top language](https://img.shields.io/github/languages/top/kev-luo/FoodFix)
 
 ## Description
 
@@ -53,23 +53,21 @@ The second page contains detailed information about the recipe that the user cli
 
 The getIngredients function makes an API call to return the list of ingredients, as well as the recipe instructions. This function displays the recipe instructions, and concatenates all ingredients into one string, which is needed as a parameter to make the API call that returns the pictures of all the ingredients.
 
-![Get ingredients and recipe instructions function details page](assets/images/getIngredients_RecipeInstructionsFxn.png)
+![Get ingredients and recipe instructions function details page](assets/images/getIngredients_RecipeInstructionsFxn.PNG)
 
 The previewIngredientWidget function makes an API call to return Spoonacular's ingredient visualizer widget. This widget is displayed inside an iframe tag, which is dynamically resized depending on the size of the returned content.
 
-![Visualize ingredients function details page](assets/images/ingredientsVisualizerFxn.png)
+![Visualize ingredients function details page](assets/images/ingredientsVisualizerFxn.PNG)
 
 The getNutrients function performs the final API call on this page. The response returns two separate arrays: the good nutrients and bad nutrients. Each of these arrays are displayed using Bulma's progress bar components.
 
-![Get nutrients function details page](assets/images/getNutrientsFxn.png)
+![Get nutrients function details page](assets/images/getNutrientsFxn.PNG)
 
 
 ## Credits
-
 - [Animate.css](https://animate.style/)
 - [Spoonacular](https://spoonacular.com/food-api)
 - [Link to Bulma](https://bulma.io/)
-
 
 ## Authors
 **Kevin Luo**
