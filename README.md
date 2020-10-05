@@ -35,6 +35,9 @@ This web application consists of:
  - Ingredient Images
 
 ## Usage
+
+[FoodFix Website](https://kev-luo.github.io/FoodFix/)
+
 The main page contains a few simple search parameters. Only the food parameter is required, all other parameters have default values set so that the user has less to type. If no results are found, a modal pops up and informs the user. If the user does not specify a food, an error message shows up below the food search bar. Results are displayed below the search box, with each recipe containing some quick facts about the nutritional content, recipe popularity, and prep time. The user can click on any recipe they like, which directs them to the next page, which we go into more detail further on in this section.
 
 ![Search page gif](assets/gifs/searchPage.gif)
@@ -72,7 +75,7 @@ The getNutrients function performs the final API call on this page. The response
 ## Authors
 **Kevin Luo**
 - [Github](https://github.com/kev-luo)
-- [LinkedIn](www.linkedin.com/in/leslie-villatoro-a3632a1a3)
+- [LinkedIn](www.linkedin.com/in/kevinluo49)
 
 **Kelly Kim** 
 - [Github](https://github.com/kellykim831)
