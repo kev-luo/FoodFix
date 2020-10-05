@@ -21,8 +21,7 @@ Rather than wasting time scrolling through Google to find the perfect recipe, ou
     SO THAT I don’t need to spend 10+ minutes looking on the internet.
 
 
-What did you learn?
-We learned how to pull information with API keys by using ajax calls. We learned how to brain storm together by coming up with ideas on how to build a useful application. Each of us helped to contribute all of our different ideas which brought a lot of creativity to our website. It was a great experience collaborating with our group members.
+
 
 
 ## Feautures
@@ -52,7 +51,7 @@ include screenshots here
 ## Authors
 * **Kevin Luo**
 - [Link to Github](https://github.com/kev-luo)
-- [Link to LinkedIn](www.linkedin.com/in/leslie-villatoro-a3632a1a3)
+- [Link to LinkedIn](www.linkedin.com/in/)
 
 
 * **Kelly Kim** 
